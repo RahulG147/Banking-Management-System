@@ -120,7 +120,7 @@ public String impsTransaction(Transactions transaction) {
 				return "LTIBANK"+trans1RefNo.getTransactionId()+trans2RefNo.getTransactionId();
 			}
 		}
-		catch(EmptyResultDataAccessException e) {
+		catch(NullPointerException e) {
 			throw new ServiceException("Invalid account number");
 		}
 		
