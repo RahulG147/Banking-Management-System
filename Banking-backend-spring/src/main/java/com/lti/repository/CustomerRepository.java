@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
 
 @Repository
@@ -26,11 +27,23 @@ public class CustomerRepository  extends GenericRepository{
 				.setParameter("pw", loginPassword)
 				.getSingleResult();
 	}
-	
-	/*public List<Transaction> fetchTransactionAdmin() {
-		return (List<Transaction>)
-				entityManager
-				.createQuery("select t from Transaction t");
-				.getResultList();
-	}*/
+	//admin part...later on change to AdminRepository	
+		public List<Transaction> fetchTransactionAdmin() {
+			List<Transaction> resultList = (List<Transaction>)
+					entityManager
+					.createQuery("select t from Transaction t")
+					.getResultList();
+					return resultList;
+		}
+		
+		
+		public List<Registration> fetchRegistrationRequestForAdmin() {
+			List<Registration> resultList = (List<Registration>)
+					entityManager
+					.createQuery("select r from Registration r")
+					.getResultList();
+					return resultList;
+		}
+		
+		
 }

@@ -125,4 +125,26 @@ public String impsTransaction(Transactions transaction) {
 		}
 		
 	}
+
+//admin part below
+	public List<Transaction> transactionViewByAdmin() {
+		try {
+			List<Transaction> list = customerRepository.fetchTransactionAdmin();
+			return list;
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ServiceException("No rows !!");
+		}
+	}
+	
+	public List<Registration> RegisterRequestAction() {
+		try {
+			List<Registration> list = customerRepository.fetchRegistrationRequestForAdmin();
+			return list;
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ServiceException("No rows !!");
+		}
+	}
+	
 }
