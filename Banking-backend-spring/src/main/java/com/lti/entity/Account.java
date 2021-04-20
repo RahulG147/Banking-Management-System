@@ -20,9 +20,7 @@ import javax.persistence.Table;
 @Table(name="tbl_account_detail")
 public class Account {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "new_seq2")
-	@SequenceGenerator(sequenceName = "reference_seq2", initialValue = 100, allocationSize = 1, name="new_seq2")	
+	@Id	
 	@Column(name="customer_id")
 	private long customerId;
 	
