@@ -146,6 +146,159 @@ public class CustomerService {
 
 	}
 
+	public String neftTransaction(Transactions transaction) {
+
+		Calendar cal =  Calendar.getInstance();
+
+		try {
+			AccountDetail acc1 = genericRepository.find(AccountDetail.class, transaction.getFromAccount());
+			AccountDetail acc2 = genericRepository.find(AccountDetail.class, transaction.getToAccount());
+
+			//setting the senders account 
+			if((cal.get(Calendar.HOUR_OF_DAY)< 8 || cal.get(Calendar.HOUR_OF_DAY)>19) || (cal.get(Calendar.DAY_OF_WEEK)==0 || cal.get(Calendar.DAY_OF_WEEK)==6))
+				throw new ServiceException("Transaction could not be carried out during this time.");
+			else {
+				if(acc1.getBankBalance()<transaction.getAmount()) {
+					throw new ServiceException("Insufficient Balance");
+				}
+				else {
+					if(transaction.getAmount()<10000.00) {
+						acc1.setBankBalance(acc1.getBankBalance()-transaction.getAmount()-2.50);
+					}
+					else if(transaction.getAmount()<100000.00) {
+						acc1.setBankBalance(acc1.getBankBalance()-transaction.getAmount()-5.00);
+					}
+					else if(transaction.getAmount()<200000.00) {
+						acc1.setBankBalance(acc1.getBankBalance()-transaction.getAmount()-15.00);
+					}
+					else {
+						acc1.setBankBalance(acc1.getBankBalance()-transaction.getAmount()-25.00);
+					}
+
+					genericRepository.save(acc1);
+
+					Transaction trans1 = new Transaction();
+
+					trans1.setFromAccount(acc1);
+					trans1.setToAccount(acc2);
+					trans1.setAmount(transaction.getAmount());
+					trans1.setModeOfTransaction(TransactionType.NEFT);
+					trans1.setRemarks("Debited for "+transaction.getRemarks());
+					trans1.setTransactionDate(LocalDateTime.now());
+					trans1.setMessage(transaction.getMessage());
+					trans1.setStatus("Debited Successfully");
+
+					List<Transaction> t1 = new ArrayList<Transaction>();
+					t1.add(trans1);
+
+					acc1.setFromTransactions(t1);
+					acc2.setToTransactions(t1);
+
+					Transaction trans1RefNo = (Transaction) genericRepository.save(trans1);
+
+					//setting the receiver's account
+					acc2.setBankBalance(acc2.getBankBalance()+transaction.getAmount());
+
+					genericRepository.save(acc2);
+
+					Transaction trans2 = new Transaction();
+					trans2.setFromAccount(acc2);
+					trans2.setToAccount(acc1);
+					trans2.setAmount(transaction.getAmount());
+					trans2.setModeOfTransaction(TransactionType.NEFT);
+					trans2.setTransactionDate(LocalDateTime.now());
+					trans2.setRemarks("Credited for "+transaction.getRemarks()+" from "+acc1.getAccount().getGeneralDetail().getFullName());
+					trans2.setMessage(transaction.getMessage());
+					trans2.setStatus("Credited Successfully");
+
+					List<Transaction> t2 = new ArrayList<Transaction>();
+					t2.add(trans2);
+
+					acc2.setFromTransactions(t2);
+					acc1.setToTransactions(t2);
+
+					Transaction trans2RefNo = (Transaction)genericRepository.save(trans2);
+
+					return "LTIBANK"+trans1RefNo.getTransactionId()+trans2RefNo.getTransactionId();
+				}
+			}
+		}
+		catch(NullPointerException e) {
+			throw new ServiceException("Invalid account number");
+		}
+	}
+
+	public String rtgsTransaction(Transactions transaction) {
+		try {
+			AccountDetail acc1 = genericRepository.find(AccountDetail.class, transaction.getFromAccount());
+			AccountDetail acc2 = genericRepository.find(AccountDetail.class, transaction.getToAccount());
+
+			if(transaction.getAmount()<200000) {
+				throw new ServiceException("Amount greater than 2 lacs can only be transferred using RTGS");
+			}
+			else {
+				//setting the senders account 
+				if(acc1.getBankBalance()<transaction.getAmount()) {
+					throw new ServiceException("Insufficient Balance");
+				}
+				else {
+
+					acc1.setBankBalance(acc1.getBankBalance()-transaction.getAmount());
+
+					genericRepository.save(acc1);
+
+					Transaction trans1 = new Transaction();
+
+					trans1.setFromAccount(acc1);
+					trans1.setToAccount(acc2);
+					trans1.setAmount(transaction.getAmount());
+					trans1.setModeOfTransaction(TransactionType.RTGS);
+					trans1.setRemarks("Debited for "+transaction.getRemarks());
+					trans1.setTransactionDate(LocalDateTime.now());
+					trans1.setMessage(transaction.getMessage());
+					trans1.setStatus("Debited Successfully");
+
+					List<Transaction> t1 = new ArrayList<Transaction>();
+					t1.add(trans1);
+
+					acc1.setFromTransactions(t1);
+					acc2.setToTransactions(t1);
+
+					Transaction trans1RefNo = (Transaction) genericRepository.save(trans1);
+
+					//setting the receiver's account
+					acc2.setBankBalance(acc2.getBankBalance()+transaction.getAmount());
+
+					genericRepository.save(acc2);
+
+					Transaction trans2 = new Transaction();
+					trans2.setFromAccount(acc2);
+					trans2.setToAccount(acc1);
+					trans2.setAmount(transaction.getAmount());
+					trans2.setModeOfTransaction(TransactionType.RTGS);
+					trans2.setTransactionDate(LocalDateTime.now());
+					trans2.setRemarks("Credited for "+transaction.getRemarks()+" from "+acc1.getAccount().getGeneralDetail().getFullName());
+					trans2.setMessage(transaction.getMessage());
+					trans2.setStatus("Credited Successfully");
+
+					List<Transaction> t2 = new ArrayList<Transaction>();
+					t2.add(trans2);
+
+					acc2.setFromTransactions(t2);
+					acc1.setToTransactions(t2);
+
+					Transaction trans2RefNo = (Transaction)genericRepository.save(trans2);
+
+					return "LTIBANK"+trans1RefNo.getTransactionId()+trans2RefNo.getTransactionId();
+				}
+
+			}
+		}
+		catch(NullPointerException e) {
+			throw new ServiceException("Invalid account number");
+		}
+	}
+
 	//admin part below
 	public List<Transaction> transactionViewByAdmin() {
 		try {
@@ -166,21 +319,21 @@ public class CustomerService {
 			throw new ServiceException("No rows !!");
 		}
 	}
-	
-public long updateCredential(AccountCredential account) {
 
-		
+	public long updateCredential(AccountCredential account) {
+
+
 		AccountCredential updateAccount = (AccountCredential) customerRepository.save(account);	
 		return updateAccount.getCustomerId();
 	}
 
-public long addPassword(Account customer) {
-	if(customerRepository.isCustomerPresent(customer.getCustomerId()))
-		throw new ServiceException("Error!! Try forget password");
-	else {
-		Account addNewEntry = (Account) customerRepository.save(customer);
-		return addNewEntry.getCustomerId();
+	public long addPassword(Account customer) {
+		if(customerRepository.isCustomerPresent(customer.getCustomerId()))
+			throw new ServiceException("Error!! Try forget password");
+		else {
+			Account addNewEntry = (Account) customerRepository.save(customer);
+			return addNewEntry.getCustomerId();
+		}
 	}
-}
 
 }

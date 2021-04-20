@@ -96,6 +96,46 @@ public class CustomerController {
 		}
 	}
 	
+	@PostMapping("/nefttransaction")
+	public TransactionStatus neft(@RequestBody Transactions transaction) {
+		try {
+			String referenceId = customerService.neftTransaction(transaction);
+			
+			TransactionStatus transactionStatus = new TransactionStatus();
+			transactionStatus.setStatus(true);
+			transactionStatus.setRefernceNo(referenceId);
+			transactionStatus.setMessage("Amount has been debited from your account and will be credited to the receipent's account");
+			
+			return transactionStatus;
+		}
+		catch (ServiceException e) {
+			TransactionStatus transactionStatus = new TransactionStatus();
+			transactionStatus.setStatus(false);
+			transactionStatus.setMessage(e.getMessage());
+			return transactionStatus;
+		}
+	}
+	
+	@PostMapping("/rtgstransaction")
+	public TransactionStatus rtgs(@RequestBody Transactions transaction) {
+		try {
+			String referenceId = customerService.rtgsTransaction(transaction);
+			
+			TransactionStatus transactionStatus = new TransactionStatus();
+			transactionStatus.setStatus(true);
+			transactionStatus.setRefernceNo(referenceId);
+			transactionStatus.setMessage("Amount has been debited from your account and will be credited to the receipent's account");
+			
+			return transactionStatus;
+		}
+		catch (ServiceException e) {
+			TransactionStatus transactionStatus = new TransactionStatus();
+			transactionStatus.setStatus(false);
+			transactionStatus.setMessage(e.getMessage());
+			return transactionStatus;
+		}
+	}
+	
 	//below codes are for admin part...change to Admin Controller later on
 	
 		@GetMapping("/TransactionViewAdmin")
