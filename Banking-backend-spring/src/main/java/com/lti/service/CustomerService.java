@@ -174,4 +174,13 @@ public long updateCredential(AccountCredential account) {
 		return updateAccount.getCustomerId();
 	}
 
+public long addPassword(Account customer) {
+	if(customerRepository.isCustomerPresent(customer.getCustomerId()))
+		throw new ServiceException("Error!! Try forget password");
+	else {
+		Account addNewEntry = (Account) customerRepository.save(customer);
+		return addNewEntry.getCustomerId();
+	}
+}
+
 }

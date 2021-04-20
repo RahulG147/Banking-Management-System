@@ -15,6 +15,7 @@ import com.lti.model.AdminTransactionView;
 import com.lti.model.CredentialStatus;
 import com.lti.model.Login;
 import com.lti.model.LoginStatus;
+import com.lti.model.NewPasswordStatus;
 import com.lti.model.RegisterStatus;
 import com.lti.model.TransactionStatus;
 import com.lti.model.Transactions;
@@ -192,5 +193,24 @@ public class CustomerController {
 				return status;
 			}
 			
+		}
+		
+		@PostMapping("/SetPassword")
+		public NewPasswordStatus setPassword(@RequestBody Account customer) {
+		
+			try {
+				long id = customerService.addPassword(customer);
+				NewPasswordStatus status = new NewPasswordStatus();
+				status.setStatus(true);
+				status.setMessage("Registration successfull!!!");
+				status.setCustomerId(id);;
+				return status;
+			}
+			catch(ServiceException e) {
+				NewPasswordStatus status = new NewPasswordStatus();
+				status.setStatus(false);
+				status.setMessage(e.getMessage());
+				return status;
+			}
 		}
 }

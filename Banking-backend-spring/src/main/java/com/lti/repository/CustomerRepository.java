@@ -45,5 +45,13 @@ public class CustomerRepository  extends GenericRepository{
 					return resultList;
 		}
 		
+		public boolean isCustomerIdPresent(long customerId) {
+			return (Long)
+					entityManager
+					.createQuery( "select a.customerId from Account a where a.customerId = :cid")
+					.setParameter("cid",customerId)
+					.getSingleResult() == 1 ? true : false;
+		
+		}
 		
 }
