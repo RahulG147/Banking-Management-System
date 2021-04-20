@@ -1,13 +1,20 @@
 package com.lti.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lti.model.AdminGetRegisterStatus;
@@ -16,7 +23,9 @@ import com.lti.model.CredentialStatus;
 import com.lti.model.Login;
 import com.lti.model.LoginStatus;
 import com.lti.model.NewPasswordStatus;
+import com.lti.model.Picture;
 import com.lti.model.RegisterStatus;
+import com.lti.model.Status;
 import com.lti.model.TransactionStatus;
 import com.lti.model.Transactions;
 import com.lti.entity.Account;
@@ -25,6 +34,7 @@ import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
 import com.lti.service.CustomerService;
 import com.lti.service.ServiceException;
+
 
 @RestController
 @CrossOrigin
@@ -253,4 +263,97 @@ public class CustomerController {
 				return status;
 			}
 		}
+		
+		@PostMapping("/pic-upload")
+		public Status upload(Picture picDetails) {
+			
+			long referenceId = picDetails.getReferenceId();
+			//long referenceId = (long)62;
+			
+			String imgUploadLocation = "e:/uploads/";
+			
+			String uploadedFileName1 = picDetails.getAadharPic().getOriginalFilename();
+			String newFileName1 = referenceId + "-" + uploadedFileName1;
+			String targetFileName1 = imgUploadLocation + newFileName1;
+			
+			String uploadedFileName2 = picDetails.getPanPic().getOriginalFilename();
+			String newFileName2 = referenceId + "-" + uploadedFileName2;
+			String targetFileName2 = imgUploadLocation + newFileName2;
+			
+			String uploadedFileName3 = picDetails.getLightBill().getOriginalFilename();
+			String newFileName3 = referenceId + "-" + uploadedFileName3;
+			String targetFileName3 = imgUploadLocation + newFileName3;
+			
+			String uploadedFileName4 = picDetails.getGstProof().getOriginalFilename();
+			String newFileName4 = referenceId + "-" + uploadedFileName4;
+			String targetFileName4 = imgUploadLocation + newFileName4;
+			
+			try {
+				FileCopyUtils.copy(picDetails.getAadharPic().getInputStream(), new FileOutputStream(targetFileName1));
+				FileCopyUtils.copy(picDetails.getPanPic().getInputStream(), new FileOutputStream(targetFileName2));
+				FileCopyUtils.copy(picDetails.getLightBill().getInputStream(), new FileOutputStream(targetFileName3));
+				FileCopyUtils.copy(picDetails.getGstProof().getInputStream(), new FileOutputStream(targetFileName4));
+			}
+			catch(IOException e) {
+				e.printStackTrace(); //hope no error would occur
+				Status status = new Status();
+				status.setStatus(false);
+				status.setMessage("Picture upload failed!");
+			}
+			System.out.println(newFileName1+newFileName2+newFileName3+newFileName4);
+			customerService.updatePicture(referenceId, targetFileName1, targetFileName2, targetFileName3, targetFileName4);
+			
+			Status status = new Status();
+			status.setStatus(true);
+			status.setMessage("Profilepic uploaded successfully!");
+			return status;
+		}
+		
+		@GetMapping("/profile")
+		//public Customer profile(@RequestParam("customerId")int id) {
+		//we need to take of help of HttpServletRequest object in below code
+		public Registration profile(@RequestParam("referenceId") long id, HttpServletRequest request) {
+			
+			//HttpSession session = request.getSession();
+			//session.setAttribute("otp", 123);
+			
+			Registration registration = customerService.get(id);
+			
+			//the problem is the image is in some folder outside this project
+			//because of this, on the client we will not be able to access the same
+			//we need to write code to copy image from d:/uploads folder to a folder inside our project
+			
+			String projPath = request.getServletContext().getRealPath("/");
+			System.out.println(projPath);
+			
+			String tempDownloadPath = projPath + "/downloads/";
+			File f = new File(tempDownloadPath);
+			if(!f.exists())
+				f.mkdir();
+			
+			String targetFile1 = tempDownloadPath + registration.getAadharPic();
+			String targetFile2 = tempDownloadPath + registration.getPanPic();
+			String targetFile3 = tempDownloadPath + registration.getLightBill();
+			String targetFile4 = tempDownloadPath + registration.getGstProof();
+			
+			//reading the original location where the image is present
+			String uploadedImagesPath = "e:/uploads/";
+			String sourceFile1 = uploadedImagesPath + registration.getAadharPic();
+			String sourceFile2 = uploadedImagesPath + registration.getPanPic();
+			String sourceFile3 = uploadedImagesPath + registration.getLightBill();
+			String sourceFile4 = uploadedImagesPath + registration.getGstProof();
+			
+			try {
+				FileCopyUtils.copy(new File(sourceFile1), new File(targetFile1));
+				FileCopyUtils.copy(new File(sourceFile2), new File(targetFile2));
+				FileCopyUtils.copy(new File(sourceFile3), new File(targetFile3));
+				FileCopyUtils.copy(new File(sourceFile4), new File(targetFile4));
+			}
+			catch (IOException e) {
+				e.printStackTrace(); //hoping for no error will occur
+			}
+			
+			return registration;
+		}
+
 }

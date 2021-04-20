@@ -77,6 +77,18 @@ public class Registration {
 	@OneToOne(mappedBy = "registration",cascade = CascadeType.ALL)
 	private Account account;
 	
+	@Column(name="aadhar_pic")
+	private String aadharPic;
+	
+	@Column(name = "pan_pic")
+	private String panPic;
+	
+	@Column(name = "light_bill")
+	private String lightBill;
+	
+	@Column(name = "gst_proof")
+	private String gstProof;
+	
 	
 	public String getRevenueRegisterNo() {
 		return revenueRegisterNo;
@@ -230,6 +242,35 @@ public class Registration {
 		this.annualIncome = annualIncome;
 	}
 
-	
+	public String getAadharPic() {
+		return aadharPic;
+	}
 
+	public void setAadharPic(String aadharPic) {
+		this.aadharPic = aadharPic;
+	}
+
+	public String getPanPic() {
+		return panPic;
+	}
+
+	public void setPanPic(String panPic) {
+		this.panPic = panPic;
+	}
+
+	public String getLightBill() {
+		return lightBill;
+	}
+
+	public void setLightBill(String lightBill) {
+		this.lightBill = lightBill;
+	}
+
+	public String getGstProof() {
+		return gstProof;
+	}
+
+	public void setGstProof(String gstProof) {
+		this.gstProof = gstProof;
+	}
 }
