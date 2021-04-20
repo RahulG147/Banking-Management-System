@@ -7,6 +7,7 @@ public class Transactions {
 	private double amount;
 	private String message;
 	private String remarks;
+	private String password;
 	
 	public long getFromAccount() {
 		return fromAccount;
@@ -39,6 +40,13 @@ public class Transactions {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
 	
 	
 }
