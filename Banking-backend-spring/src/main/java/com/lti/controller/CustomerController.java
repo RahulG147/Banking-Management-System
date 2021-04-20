@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lti.model.AdminGetRegisterStatus;
 import com.lti.model.AdminTransactionView;
+import com.lti.model.CredentialStatus;
 import com.lti.model.Login;
 import com.lti.model.LoginStatus;
 import com.lti.model.RegisterStatus;
 import com.lti.model.TransactionStatus;
 import com.lti.model.Transactions;
 import com.lti.entity.Account;
+import com.lti.entity.AccountCredential;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
 import com.lti.service.CustomerService;
@@ -170,5 +172,25 @@ public class CustomerController {
 				viewList.add(status);
 				return viewList;
 			}
+		}
+		
+		@PostMapping("/setcredential")
+		public CredentialStatus setCredential(@RequestBody AccountCredential account ) {
+			
+			try {
+				long id= customerService.updateCredential(account);
+				CredentialStatus status = new CredentialStatus();
+				status.setStatus(true);
+				status.setMessage("updation successful !");
+				status.setCustId(id);
+				return status;
+			}
+			catch(ServiceException e) {
+				CredentialStatus status = new CredentialStatus();
+				status.setStatus(false);
+				status.setMessage(e.getMessage());
+				return status;
+			}
+			
 		}
 }

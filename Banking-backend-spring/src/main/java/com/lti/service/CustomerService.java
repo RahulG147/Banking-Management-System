@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lti.entity.Account;
+import com.lti.entity.AccountCredential;
 import com.lti.entity.AccountDetail;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
@@ -164,6 +165,13 @@ public class CustomerService {
 		catch(EmptyResultDataAccessException e) {
 			throw new ServiceException("No rows !!");
 		}
+	}
+	
+public long updateCredential(AccountCredential account) {
+
+		
+		AccountCredential updateAccount = (AccountCredential) customerRepository.save(account);	
+		return updateAccount.getCustomerId();
 	}
 
 }
