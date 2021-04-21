@@ -28,7 +28,6 @@ import com.lti.model.RegisterStatus;
 import com.lti.model.Status;
 import com.lti.model.TransactionStatus;
 import com.lti.model.Transactions;
-import com.lti.entity.AcceptedRegistrations;
 import com.lti.entity.Account;
 import com.lti.entity.AccountCredential;
 import com.lti.entity.Registration;
@@ -227,7 +226,7 @@ public class CustomerController {
 		}
 		
 		@PostMapping("/setcredential")
-		public CredentialStatus setCredential(@RequestBody AccountCredential account) {
+		public CredentialStatus setCredential(@RequestBody AccountCredential account ) {
 			
 			try {
 				long id= customerService.updateCredential(account);

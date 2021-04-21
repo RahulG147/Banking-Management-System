@@ -10,11 +10,11 @@ public class Picture {
 	private MultipartFile lightBill;
 	private MultipartFile gstProof;
 	
-	public long getReferenceId() {
-		return referenceId;
-	}
 	public void setReferenceId(long referenceId) {
 		this.referenceId = referenceId;
+	}
+	public long getReferenceId() {
+		return referenceId;
 	}
 	public MultipartFile getAadharPic() {
 		return aadharPic;

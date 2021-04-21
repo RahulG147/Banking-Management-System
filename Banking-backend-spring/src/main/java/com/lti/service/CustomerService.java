@@ -40,13 +40,13 @@ public class CustomerService {
 			throw new ServiceException("Customer already registered !");
 		else {
 			Registration updateCustomer = (Registration) customerRepository.save(customer);
-			String subject = "Recieved Registration Request";
+		/*	String subject = "Recieved Registration Request";
 			String text = "Hi " + customer.getFirstName() + customer.getLastName()
 						+ ", we have received a request from you for registering with our bank.\n" 
 						+ "Your request will be approved when all the necessary documents are uploaded. \n"
 						+ "This is your service reference number " + updateCustomer.getReferenceNo();
 			
-			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);
+			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);*/
 			return updateCustomer.getReferenceNo();
 		}
 	}
