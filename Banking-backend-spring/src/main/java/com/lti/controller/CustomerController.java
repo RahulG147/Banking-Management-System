@@ -245,6 +245,36 @@ public class CustomerController {
 			
 		}
 		
+		@GetMapping("/FileViewByAdmin")
+		public List<AdminGetRegisterStatus> requestFileView(@RequestParam Long ref) {
+			try {
+				List<AdminGetRegisterStatus> viewList = new ArrayList<AdminGetRegisterStatus>();
+				Registration reg = (Registration) customerService.registerFileView(ref);
+				AdminGetRegisterStatus view1 = new  AdminGetRegisterStatus();
+				view1.setStatus(true);
+				view1.setMessage("Retrieved Account Request!");
+				view1.setAadhaarNo(reg.getAadhaarNo());
+				view1.setRevenueRegisterNo(reg.getRevenueRegisterNo());
+				view1.setGstNumber(reg.getGstNumber());
+				view1.setPanCard(reg.getPanCard());
+				view1.setAadharPic(reg.getAadharPic());
+				view1.setPanPic(reg.getPanPic());
+				view1.setGstProof(reg.getGstNumber());
+				view1.setLightBill(reg.getLightBill());
+				viewList.add(view1);
+				
+				return viewList;
+			}
+			catch(ServiceException e) {
+				AdminGetRegisterStatus status = new AdminGetRegisterStatus();
+				List<AdminGetRegisterStatus> viewList = new ArrayList<AdminGetRegisterStatus>();
+				status.setStatus(false);
+				status.setMessage(e.getMessage());	
+				viewList.add(status);
+				return viewList;
+			}
+		}
+		
 		@PostMapping("/SetPassword")
 		public NewPasswordStatus setPassword(@RequestBody Account customer) {
 		
@@ -356,4 +386,5 @@ public class CustomerController {
 			return registration;
 		}
 
+		
 }

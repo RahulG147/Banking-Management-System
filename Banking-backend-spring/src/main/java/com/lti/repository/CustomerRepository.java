@@ -45,6 +45,19 @@ public class CustomerRepository  extends GenericRepository{
 					return resultList;
 		}
 		
+		public Registration fetchRegistrationFileForAdmin(Long serviceNo) {
+			Registration resultList = (Registration)
+					entityManager
+					.createQuery("select r from Registration r where r.referenceNo = :ref ")
+					.setParameter("ref",serviceNo)
+					.getSingleResult() ;
+					return resultList;
+		}
+		
+		public void deleteById(Registration reg) {
+			entityManager.remove(reg);
+		}
+		
 		public boolean isCustomerIdPresent(long customerId) {
 			return (Long)
 					entityManager

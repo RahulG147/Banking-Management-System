@@ -10,6 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lti.entity.AcceptedRegistrations;
 import com.lti.entity.Account;
 import com.lti.entity.AccountCredential;
 import com.lti.entity.AccountDetail;
@@ -320,12 +321,41 @@ public class CustomerService {
 		}
 	}
 
-	public long updateCredential(AccountCredential account) {
+public long updateCredential(AccountCredential account) {
 
-
+		
 		AccountCredential updateAccount = (AccountCredential) customerRepository.save(account);	
+		Registration reg =(Registration) customerRepository.find(Registration.class, account.getRegistration());
+		//AcceptedRegistrations accReg = (Registration) customerRepository.save(reg);
+		AcceptedRegistrations accReg = new AcceptedRegistrations();
+		accReg.setReferenceNo(reg.getReferenceNo());
+		accReg.setTitle(reg.getTitle());
+		accReg.setFirstName(reg.getFirstName());
+		accReg.setLastName(reg.getLastName());
+		accReg.setMiddleName(reg.getMiddleName());
+		accReg.setFatherName(reg.getFatherName());
+		accReg.setMobileNo(reg.getMobileNo());
+		accReg.setEmailId(reg.getEmailId());
+		accReg.setAadhaarNo(reg.getAadhaarNo());
+		accReg.setPanCard(reg.getPanCard());
+		accReg.setDateOfBirth(reg.getDateOfBirth());
+		accReg.setResidentialAddress(reg.getResidentialAddress());
+		accReg.setPermanent(reg.getPermanent());
+		accReg.setOccupation(reg.getOccupation());
+		accReg.setIncomeSource(reg.getIncomeSource());
+		accReg.setRevenueRegisterNo(reg.getRevenueRegisterNo());
+		accReg.setGstNumber(reg.getGstNumber());
+		accReg.setAnnualIncome(reg.getAnnualIncome());
+		accReg.setAadharPic(reg.getAadharPic());
+		accReg.setPanPic(reg.getPanPic());
+		accReg.setLightBill(reg.getLightBill());
+		accReg.setGstProof(reg.getGstProof());
+		
+		customerRepository.save(accReg);
+		customerRepository.deleteById(reg);
 		return updateAccount.getCustomerId();
 	}
+	
 
 	public long addPassword(Account customer) {
 		if(customerRepository.isCustomerPresent(customer.getCustomerId()))
@@ -352,4 +382,13 @@ public class CustomerService {
 		return customerRepository.find(Registration.class, id);
 	}
 
+	public Registration registerFileView(Long ref) {
+		try {
+			Registration reg = customerRepository.fetchRegistrationFileForAdmin(ref);
+			return reg;
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ServiceException("No rows !!");
+		}
+	}
 }
