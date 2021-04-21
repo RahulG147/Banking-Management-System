@@ -23,9 +23,6 @@ import com.lti.repository.GenericRepository;
 @Service
 @Transactional
 public class CustomerService {
-	
-	@Autowired
-	EmailService emailService;
 
 	@Autowired
 	private CustomerRepository customerRepository;
@@ -39,15 +36,6 @@ public class CustomerService {
 			throw new ServiceException("Customer already registered !");
 		else {
 			Registration updateCustomer = (Registration) customerRepository.save(customer);
-			String subject = "Registration Confirmation";
-			String text = "Hi " 
-			+ customer.getFirstName()
-			+ customer.getLastName()
-			+ ", we have recieved your request for registering with us. Your account will be active once you upload all the necessary documents."
-			+" This is your service reference number "
-			+updateCustomer.getReferenceNo();
-			
-			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);
 			return updateCustomer.getReferenceNo();
 		}
 	}

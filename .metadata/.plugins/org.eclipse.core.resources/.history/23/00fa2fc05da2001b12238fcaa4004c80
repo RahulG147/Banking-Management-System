@@ -23,9 +23,6 @@ import com.lti.repository.GenericRepository;
 @Service
 @Transactional
 public class CustomerService {
-	
-	@Autowired
-	EmailService emailService;
 
 	@Autowired
 	private CustomerRepository customerRepository;
@@ -47,7 +44,7 @@ public class CustomerService {
 			+" This is your service reference number "
 			+updateCustomer.getReferenceNo();
 			
-			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);
+			emailService.sendEmailForNewRegistration(customer.getEmail(),text,subject);
 			return updateCustomer.getReferenceNo();
 		}
 	}

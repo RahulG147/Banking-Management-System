@@ -47,7 +47,7 @@ public class CustomerService {
 			+" This is your service reference number "
 			+updateCustomer.getReferenceNo();
 			
-			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);
+			emailService.sendEmailForNewRegistration(customer.getEmailId()(),text,subject);
 			return updateCustomer.getReferenceNo();
 		}
 	}
