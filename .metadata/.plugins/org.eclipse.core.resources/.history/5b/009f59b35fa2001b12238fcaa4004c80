@@ -46,9 +46,9 @@ public class CustomerService {
 			+ ", we have recieved your request for registering with us. Your account will be active once you upload all the necessary documents."
 			+" This is your service reference number "
 			+updateCustomer.getReferenceNo();
+			
 			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);
 			return updateCustomer.getReferenceNo();
-			
 		}
 	}
 
