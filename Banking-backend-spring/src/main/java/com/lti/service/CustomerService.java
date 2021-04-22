@@ -40,13 +40,13 @@ public class CustomerService {
 			throw new ServiceException("Customer already registered !");
 		else {
 			Registration updateCustomer = (Registration) customerRepository.save(customer);
-		/*	String subject = "Recieved Registration Request";
+			String subject = "Recieved Registration Request";
 			String text = "Hi " + customer.getFirstName() + customer.getLastName()
 						+ ", we have received a request from you for registering with our bank.\n" 
 						+ "Your request will be approved when all the necessary documents are uploaded. \n"
 						+ "This is your service reference number " + updateCustomer.getReferenceNo();
 			
-			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);*/
+			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);
 			return updateCustomer.getReferenceNo();
 		}
 	}
@@ -333,7 +333,6 @@ public class CustomerService {
 
 public long updateCredential(AccountCredential account) {
 
-		
 		AccountCredential updateAccount = (AccountCredential) customerRepository.save(account);	
 		Registration reg =(Registration) customerRepository.find(Registration.class, account.getRegistration());
 		//AcceptedRegistrations accReg = (Registration) customerRepository.save(reg);
@@ -365,9 +364,7 @@ public long updateCredential(AccountCredential account) {
 		customerRepository.deleteById(reg);
 		System.out.println(accReg.getReferenceNo());
 		
-		if(!customerRepository.isReferenceIdPresent(accReg.getReferenceNo()))
-			throw new ServiceException("No such customer registered");
-		else {
+		if(customerRepository.isReferenceIdPresent(accReg.getReferenceNo())){
 			String subject = "Registration Confirmation";
 			String text = "Hi " + accReg.getFirstName() + accReg.getLastName()
 						+ " Here are your login credentials\n" 
@@ -379,6 +376,12 @@ public long updateCredential(AccountCredential account) {
 			
 			emailService.sendEmailForNewRegistration(accReg.getEmailId(),text,subject);
 			return updateAccount.getCustomerId();
+		}
+			
+		else {
+
+			throw new ServiceException("No such customer registered");
+			
 		}
 	}
 	

@@ -69,7 +69,7 @@ public class CustomerRepository  extends GenericRepository{
 		public boolean isReferenceIdPresent(long referenceId) {
 			return (Long)
 					entityManager
-					.createQuery( "select r.referenceNo from AcceptedRegistrations r where r.referenceNo = :sid")
+					.createQuery( "select count(r.referenceNo) from AcceptedRegistrations r where r.referenceNo = :sid")
 					.setParameter("sid",referenceId)
 					.getSingleResult() == 1 ? true : false;
 		
