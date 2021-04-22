@@ -2,6 +2,7 @@ package com.lti.model;
 
 public class Transactions {
  
+	private String customerId;
 	private long fromAccount;
 	private long toAccount;
 	private double amount;
@@ -45,6 +46,12 @@ public class Transactions {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
 	}
 	
 	
