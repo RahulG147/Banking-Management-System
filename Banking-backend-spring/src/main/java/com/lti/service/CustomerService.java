@@ -14,7 +14,6 @@ import com.lti.entity.AcceptedRegistrations;
 import com.lti.entity.Account;
 import com.lti.entity.AccountCredential;
 import com.lti.entity.AccountDetail;
-import com.lti.entity.GeneralDetail;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
 import com.lti.enums.TransactionType;
@@ -378,26 +377,12 @@ public long updateCredential(AccountCredential account) {
 		accReg.setPanPic(reg.getPanPic());
 		accReg.setLightBill(reg.getLightBill());
 		accReg.setGstProof(reg.getGstProof());
+		
 		customerRepository.save(accReg);
 		customerRepository.insertIntoAccount(reg.getReferenceNo(),updateAccount.getLoginPassword(),updateAccount.getTransactionPassword(),updateAccount.getCustomerId());
 		customerRepository.insertIntoAccontType(updateAccount.getAccountNumber(),updateAccount.getAccountType(),updateAccount.getBalance(),updateAccount.getCustomerId());
-		
-		Account acc =(Account) customerRepository.find(Account.class,updateAccount.getCustomerId());
-		System.out.println(acc.getCustomerId());
-		GeneralDetail details = new GeneralDetail();
-		details.setAadhaarNo(reg.getAadhaarNo());//pk
-		details.setAccount(acc);//fk
-		details.setFullName(reg.getFirstName()+" "+reg.getLastName());
-		details.setDateOfBirth(reg.getDateOfBirth());
-		details.setMailingAddress(reg.getResidentialAddress());
-		details.setPanCard(reg.getPanCard());
-		details.setOccupation(reg.getOccupation());
-		details.setGrossIncome(reg.getAnnualIncome());
-		//acc.setGeneralDetail(details);
-		customerRepository.save(details);
-		
 		customerRepository.deleteById(reg);
-		//System.out.println(accReg.getReferenceNo());
+		System.out.println(accReg.getReferenceNo());
 		
 		if(customerRepository.isReferenceIdPresent(accReg.getReferenceNo())){
 			String subject = "Registration Confirmation";

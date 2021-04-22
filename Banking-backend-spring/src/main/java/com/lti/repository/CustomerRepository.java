@@ -79,8 +79,6 @@ public class CustomerRepository  extends GenericRepository{
 			.executeUpdate();
 		}
 		
-		
-		
 		public boolean isCustomerIdPresent(long customerId) {
 			return (Long)
 					entityManager
