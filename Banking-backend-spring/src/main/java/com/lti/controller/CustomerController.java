@@ -276,24 +276,24 @@ public class CustomerController {
 			}
 		}
 		
-//		@PostMapping("/SetPassword")
-//		public NewPasswordStatus setPassword(@RequestBody Account customer) {
-//		
-//			try {
-//				long id = customerService.addPassword(customer);
-//				NewPasswordStatus status = new NewPasswordStatus();
-//				status.setStatus(true);
-//				status.setMessage("Registration successfull!!!");
-//				status.setCustomerId(id);;
-//				return status;
-//			}
-//			catch(ServiceException e) {
-//				NewPasswordStatus status = new NewPasswordStatus();
-//				status.setStatus(false);
-//				status.setMessage(e.getMessage());
-//				return status;
-//			}
-//		}
+		@PostMapping("/SetPassword")
+		public NewPasswordStatus setPassword(@RequestBody Account customer) {
+		
+			try {
+				long id = customerService.addPassword(customer);
+				NewPasswordStatus status = new NewPasswordStatus();
+				status.setStatus(true);
+				status.setMessage("Registration successfull!!!");
+				status.setCustomerId(id);;
+				return status;
+			}
+			catch(ServiceException e) {
+				NewPasswordStatus status = new NewPasswordStatus();
+				status.setStatus(false);
+				status.setMessage(e.getMessage());
+				return status;
+			}
+		}
 		
 		@PostMapping("/pic-upload")
 		public Status upload(Picture picDetails) {
@@ -385,25 +385,6 @@ public class CustomerController {
 			}
 			
 			return registration;
-		}
-		
-		@PostMapping("/SetPassword")
-		public NewPasswordStatus setPassword(@RequestBody Account acc) {
-			
-			try {
-				long id = customerService.addPassword(acc.getCustomerId(), acc.getLoginPassword(), acc.getTransactionPassword());
-				NewPasswordStatus status = new NewPasswordStatus();
-				status.setStatus(true);
-				status.setMessage("Registration successfull!!!");
-				status.setCustomerId(id);
-				return status;
-			}
-			catch(ServiceException e) {
-				NewPasswordStatus status = new NewPasswordStatus();
-				status.setStatus(false);
-				status.setMessage(e.getMessage());
-				return status;
-			}
 		}
 
 		
