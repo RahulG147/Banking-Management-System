@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +27,7 @@ public class Account {
 	
 	@OneToOne
 	@JoinColumn(name="service_reference_no")
-	private Registration registration ;
+	private AcceptedRegistrations registration ;
 	
 	@Column(name="login_password")
 	private String loginPassword;
@@ -34,7 +35,7 @@ public class Account {
 	@Column(name="transaction_password")
 	private String transactionPassword;
 	
-	@OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "account",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	private List<AccountDetail> accounts;
 
 	@OneToOne(mappedBy = "account",cascade = CascadeType.ALL)
@@ -48,14 +49,13 @@ public class Account {
 	public void setCustomerId(long customerId) {
 		this.customerId = customerId;
 	}
+		
 
-	
-
-	public Registration getRegistration() {
+	public AcceptedRegistrations getRegistration() {
 		return registration;
 	}
 
-	public void setRegistration(Registration registration) {
+	public void setRegistration(AcceptedRegistrations registration) {
 		this.registration = registration;
 	}
 

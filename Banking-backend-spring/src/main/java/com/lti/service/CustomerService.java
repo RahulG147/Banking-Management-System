@@ -361,6 +361,8 @@ public long updateCredential(AccountCredential account) {
 		accReg.setGstProof(reg.getGstProof());
 		
 		customerRepository.save(accReg);
+		customerRepository.insertIntoAccount(reg.getReferenceNo(),updateAccount.getLoginPassword(),updateAccount.getTransactionPassword(),updateAccount.getCustomerId());
+		customerRepository.insertIntoAccontType(updateAccount.getAccountNumber(),updateAccount.getAccountType(),updateAccount.getBalance(),updateAccount.getCustomerId());
 		customerRepository.deleteById(reg);
 		System.out.println(accReg.getReferenceNo());
 		

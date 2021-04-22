@@ -74,8 +74,8 @@ public class Registration {
 	@Column(name="gross_income")
 	private double annualIncome;
 
-	@OneToOne(mappedBy = "registration",cascade = CascadeType.ALL)
-	private Account account;
+	/*@OneToOne(mappedBy = "registration",cascade = CascadeType.ALL)
+	private Account account;*/
 	
 	@Column(name="aadhar_pic")
 	private String aadharPic;
@@ -106,13 +106,13 @@ public class Registration {
 		this.gstNumber = gstNumber;
 	}
 
-	public Account getAccount() {
+	/*public Account getAccount() {
 		return account;
 	}
 
 	public void setAccount(Account account) {
 		this.account = account;
-	}
+	}*/
 
 	public long getReferenceNo() {
 		return referenceNo;

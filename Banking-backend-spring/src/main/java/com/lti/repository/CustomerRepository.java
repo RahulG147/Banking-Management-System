@@ -58,6 +58,27 @@ public class CustomerRepository  extends GenericRepository{
 			entityManager.remove(reg);
 		}
 		
+		public void insertIntoAccount(long registration,String loginPassword,String transactionPassword,long customerId) {
+			
+			entityManager
+			.createNativeQuery("insert into tbl_account_detail (customer_id,service_reference_no,login_password,transaction_password) values (?,?,?,?)")
+			.setParameter(1, customerId)
+			.setParameter(2, registration)
+			.setParameter(3, loginPassword)
+			.setParameter(4, transactionPassword)
+			.executeUpdate();
+			}
+		public void insertIntoAccontType(long accountNumber,String accountType,double balance,long customerId) {
+			
+			entityManager
+			.createNativeQuery("insert into tbl_account_type (customer_id,account_type,balance,account_number) values (?,?,?,?)")
+			.setParameter(1, customerId)
+			.setParameter(2, accountType)
+			.setParameter(3, balance)
+			.setParameter(4, accountNumber)
+			.executeUpdate();
+		}
+		
 		public boolean isCustomerIdPresent(long customerId) {
 			return (Long)
 					entityManager

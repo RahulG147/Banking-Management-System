@@ -21,8 +21,6 @@ import com.lti.enums.AccountType;
 public class AccountDetail {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "new_seq3")
-	@SequenceGenerator(sequenceName = "reference_seq3", initialValue = 1000, allocationSize = 1, name="new_seq3")
 	@Column(name="account_number")
 	private long accountNumber;
 	
