@@ -47,7 +47,6 @@ public class CustomerController {
 	public RegisterStatus register(@RequestBody Registration customer) {
 	
 		try {
-			
 			long id = customerService.register(customer);
 			RegisterStatus status = new RegisterStatus();
 			status.setStatus(true);
@@ -227,7 +226,7 @@ public class CustomerController {
 		}
 		
 		@PostMapping("/setcredential")
-		public CredentialStatus setCredential(@RequestBody AccountCredential account ) {
+		public CredentialStatus setCredential(@RequestBody AccountCredential account) {
 			
 			try {
 				long id= customerService.updateCredential(account);
@@ -332,7 +331,7 @@ public class CustomerController {
 				status.setMessage("Picture upload failed!");
 			}
 			System.out.println(newFileName1+newFileName2+newFileName3+newFileName4);
-			customerService.updatePicture(referenceId, newFileName1, newFileName2, newFileName3, newFileName4);
+			customerService.updatePicture(referenceId, targetFileName1, targetFileName2, targetFileName3, targetFileName4);
 			
 			Status status = new Status();
 			status.setStatus(true);
@@ -368,7 +367,7 @@ public class CustomerController {
 			String targetFile4 = tempDownloadPath + registration.getGstProof();
 			
 			//reading the original location where the image is present
-			String uploadedImagesPath = "E:\\uploads\\";
+			String uploadedImagesPath = "e:/uploads/";
 			String sourceFile1 = uploadedImagesPath + registration.getAadharPic();
 			String sourceFile2 = uploadedImagesPath + registration.getPanPic();
 			String sourceFile3 = uploadedImagesPath + registration.getLightBill();
