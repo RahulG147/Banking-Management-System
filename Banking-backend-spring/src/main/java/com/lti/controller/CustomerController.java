@@ -295,13 +295,14 @@ public class CustomerController {
 			}
 		}
 		
+
 		@PostMapping("/pic-upload")
 		public Status upload(Picture picDetails) {
 			
 			long referenceId = picDetails.getReferenceId();
 			//long referenceId = (long)62;
 			
-			String imgUploadLocation = "e:/uploads/";
+			String imgUploadLocation = "d:/uploads/";
 			
 			String uploadedFileName1 = picDetails.getAadharPic().getOriginalFilename();
 			String newFileName1 = referenceId + "-" + uploadedFileName1;
@@ -331,7 +332,7 @@ public class CustomerController {
 				status.setStatus(false);
 				status.setMessage("Picture upload failed!");
 			}
-			System.out.println(newFileName1+newFileName2+newFileName3+newFileName4);
+			//System.out.println(newFileName1+newFileName2+newFileName3+newFileName4);
 			customerService.updatePicture(referenceId, newFileName1, newFileName2, newFileName3, newFileName4);
 			
 			Status status = new Status();

@@ -14,6 +14,7 @@ import com.lti.entity.AcceptedRegistrations;
 import com.lti.entity.Account;
 import com.lti.entity.AccountCredential;
 import com.lti.entity.AccountDetail;
+import com.lti.entity.GeneralDetail;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
 import com.lti.enums.TransactionType;
@@ -40,13 +41,13 @@ public class CustomerService {
 			throw new ServiceException("Customer already registered !");
 		else {
 			Registration updateCustomer = (Registration) customerRepository.save(customer);
-			String subject = "Recieved Registration Request";
+			/*String subject = "Recieved Registration Request";
 			String text = "Hi " + customer.getFirstName() + customer.getLastName()
 						+ ", we have received a request from you for registering with our bank.\n" 
 						+ "Your request will be approved when all the necessary documents are uploaded. \n"
 						+ "This is your service reference number " + updateCustomer.getReferenceNo();
 			
-			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);
+			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);*/
 			return updateCustomer.getReferenceNo();
 		}
 	}
@@ -377,14 +378,28 @@ public long updateCredential(AccountCredential account) {
 		accReg.setPanPic(reg.getPanPic());
 		accReg.setLightBill(reg.getLightBill());
 		accReg.setGstProof(reg.getGstProof());
-		
 		customerRepository.save(accReg);
+		
 		customerRepository.insertIntoAccount(reg.getReferenceNo(),updateAccount.getLoginPassword(),updateAccount.getTransactionPassword(),updateAccount.getCustomerId());
 		customerRepository.insertIntoAccontType(updateAccount.getAccountNumber(),updateAccount.getAccountType(),updateAccount.getBalance(),updateAccount.getCustomerId());
+		
+		Account acc =(Account) customerRepository.find(Account.class,updateAccount.getCustomerId());
+		System.out.println(acc.getCustomerId());
+		GeneralDetail details = new GeneralDetail();
+		details.setAadhaarNo(reg.getAadhaarNo());//pk
+		details.setAccount(acc);//fk
+		details.setFullName(reg.getFirstName()+" "+reg.getLastName());
+		details.setDateOfBirth(reg.getDateOfBirth());
+		details.setMailingAddress(reg.getResidentialAddress());
+		details.setPanCard(reg.getPanCard());
+		details.setOccupation(reg.getOccupation());
+		details.setGrossIncome(reg.getAnnualIncome());
+		//acc.setGeneralDetail(details);
+		customerRepository.save(details);
 		customerRepository.deleteById(reg);
 		System.out.println(accReg.getReferenceNo());
 		
-		if(customerRepository.isReferenceIdPresent(accReg.getReferenceNo())){
+		/*if(customerRepository.isReferenceIdPresent(accReg.getReferenceNo())){
 			String subject = "Registration Confirmation";
 			String text = "Hi " + accReg.getFirstName() + accReg.getLastName()
 						+ " Here are your login credentials\n" 
@@ -394,15 +409,15 @@ public long updateCredential(AccountCredential account) {
 						+ "\nTransaction Password: " + account.getTransactionPassword()
 						+ "\nThank you!";
 			
-			emailService.sendEmailForNewRegistration(accReg.getEmailId(),text,subject);
+			emailService.sendEmailForNewRegistration(accReg.getEmailId(),text,subject);*/
 			return updateAccount.getCustomerId();
-		}
+		/*}
 			
 		else {
 
 			throw new ServiceException("No such customer registered");
 			
-		}
+		}*/
 	}
 	
 
