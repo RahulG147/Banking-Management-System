@@ -421,14 +421,14 @@ public long updateCredential(AccountCredential account) {
 	}
 	
 
-//	public long addPassword(Account customer) {
-//		if(customerRepository.isCustomerPresent(customer.getCustomerId()))
-//			throw new ServiceException("Error!! Try forget password");
-//		else {
-//			Account addNewEntry = (Account) customerRepository.save(customer);
-//			return addNewEntry.getCustomerId();
-//		}
-//	}
+	public long addPassword(Account customer) {
+		if(customerRepository.isCustomerPresent(customer.getCustomerId()))
+			throw new ServiceException("Error!! Try forget password");
+		else {
+			Account addNewEntry = (Account) customerRepository.save(customer);
+			return addNewEntry.getCustomerId();
+		}
+	}
 	
 	public void updatePicture(long referenceId, String newFileName1, String newFileName2, String newFileName3, String newFileName4) {
 		System.out.println(newFileName1+newFileName2+newFileName3+newFileName4);
