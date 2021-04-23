@@ -76,6 +76,7 @@ public class CustomerController {
 			loginStatus.setStatus(true);
 			loginStatus.setMessage("Login successful!");
 			loginStatus.setCustomerId(account.getCustomerId());
+			loginStatus.setAccounts(customerService.getAccounts(account.getCustomerId()));
 			Registration registration = new  Registration();
 			loginStatus.setName(registration.getFirstName());
 			loginStatus.setName(registration.getMiddleName());

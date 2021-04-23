@@ -26,7 +26,7 @@ import com.lti.repository.GenericRepository;
 @Service
 @Transactional
 public class CustomerService {
-	
+
 	@Autowired
 	EmailService emailService;
 
@@ -47,7 +47,7 @@ public class CustomerService {
 						+ ", we have received a request from you for registering with our bank.\n" 
 						+ "Your request will be approved when all the necessary documents are uploaded. \n"
 						+ "This is your service reference number " + updateCustomer.getReferenceNo();
-			
+
 			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);*/
 			return updateCustomer.getReferenceNo();
 		}
@@ -68,15 +68,15 @@ public class CustomerService {
 		try {
 			Registration reg = (Registration) customerRepository.find(Registration.class, ref);
 			customerRepository.deleteById(reg);
-			
+
 		}
 		catch(EmptyResultDataAccessException e) {
 			throw new ServiceException("No rows ");
 		}
-		
-		
+
+
 	}
-	
+
 	public String impsTransaction(Transactions transaction) {
 
 		Calendar cal =  Calendar.getInstance();
@@ -364,7 +364,7 @@ public class CustomerService {
 		}
 	}
 
-public long updateCredential(AccountCredential account) {
+	public long updateCredential(AccountCredential account) {
 
 		AccountCredential updateAccount = (AccountCredential) customerRepository.save(account);	
 		Registration reg =(Registration) customerRepository.find(Registration.class, account.getRegistration());
@@ -393,10 +393,10 @@ public long updateCredential(AccountCredential account) {
 		accReg.setLightBill(reg.getLightBill());
 		accReg.setGstProof(reg.getGstProof());
 		customerRepository.save(accReg);
-		
+
 		customerRepository.insertIntoAccount(reg.getReferenceNo(),updateAccount.getLoginPassword(),updateAccount.getTransactionPassword(),updateAccount.getCustomerId());
 		customerRepository.insertIntoAccontType(updateAccount.getAccountNumber(),updateAccount.getAccountType(),updateAccount.getBalance(),updateAccount.getCustomerId());
-		
+
 		Account acc =(Account) customerRepository.find(Account.class,updateAccount.getCustomerId());
 		System.out.println(acc.getCustomerId());
 		GeneralDetail details = new GeneralDetail();
@@ -412,7 +412,7 @@ public long updateCredential(AccountCredential account) {
 		customerRepository.save(details);
 		customerRepository.deleteById(reg);
 		System.out.println(accReg.getReferenceNo());
-		
+
 		/*if(customerRepository.isReferenceIdPresent(accReg.getReferenceNo())){
 			String subject = "Registration Confirmation";
 			String text = "Hi " + accReg.getFirstName() + accReg.getLastName()
@@ -422,18 +422,18 @@ public long updateCredential(AccountCredential account) {
 						+ "\nLogin Password: " + account.getLoginPassword()
 						+ "\nTransaction Password: " + account.getTransactionPassword()
 						+ "\nThank you!";
-			
+
 			emailService.sendEmailForNewRegistration(accReg.getEmailId(),text,subject);*/
-			return updateAccount.getCustomerId();
+		return updateAccount.getCustomerId();
 		/*}
-			
+
 		else {
 
 			throw new ServiceException("No such customer registered");
-			
+
 		}*/
 	}
-	
+
 
 	public long addPassword(Account customer) {
 		if(customerRepository.isCustomerPresent(customer.getCustomerId()))
@@ -443,7 +443,7 @@ public long updateCredential(AccountCredential account) {
 			return addNewEntry.getCustomerId();
 		}
 	}
-	
+
 	public void updatePicture(long referenceId, String newFileName1, String newFileName2, String newFileName3, String newFileName4) {
 		System.out.println(newFileName1+newFileName2+newFileName3+newFileName4);
 		Registration registration = customerRepository.find(Registration.class, referenceId);
@@ -451,11 +451,11 @@ public long updateCredential(AccountCredential account) {
 		registration.setPanPic(newFileName2);
 		registration.setLightBill(newFileName3);
 		registration.setGstProof(newFileName4);
-				
+
 		customerRepository.save(registration);
-		
+
 	}
-	
+
 	public Registration get(long id) {
 		return customerRepository.find(Registration.class, id);
 	}
@@ -469,45 +469,49 @@ public long updateCredential(AccountCredential account) {
 			throw new ServiceException("No rows !!");
 		}
 	}
-	
+
 	public long addPassword(long customerId, String loginPassword, String transactionPassword) {
 		//if(customerRepository.isCustomerPresent(customer.getCustomerId())) {
-			//throw new ServiceException("Error!! Try forget password");
+		//throw new ServiceException("Error!! Try forget password");
 		//}
 		//if(customerRepository.isCustomerIdPresentInAdminTable(admin.getCustomerId())){
-			//Account acc = (Account) customerRepository.find(Account.class, customerId);
-			//String loginPassword = acc.getLoginPassword();
-			//String transactionPassword = acc.getTransactionPassword();
-			customerRepository.updateNewPassword(customerId, loginPassword, transactionPassword);
-//			Account addNewEntry = (Account) customerRepository.save(customer);
-//			AccountDetail addNewTypeEntry = new AccountDetail();
-//			AccountCredential adminTable = new AccountCredential();
-//			addNewTypeEntry.setAccountNumber(adminTable.getAccountNumber());
-//			addNewTypeEntry.setAccountType(adminTable.getAccountType());;
-//			addNewTypeEntry.setBankBalance(adminTable.getBalance());
-//			addNewTypeEntry.setCustomerId(adminTable.getCustomerId());
-//			customerRepository.save(addNewTypeEntry);
-			return customerId;
-		}
+		//Account acc = (Account) customerRepository.find(Account.class, customerId);
+		//String loginPassword = acc.getLoginPassword();
+		//String transactionPassword = acc.getTransactionPassword();
+		customerRepository.updateNewPassword(customerId, loginPassword, transactionPassword);
+		//			Account addNewEntry = (Account) customerRepository.save(customer);
+		//			AccountDetail addNewTypeEntry = new AccountDetail();
+		//			AccountCredential adminTable = new AccountCredential();
+		//			addNewTypeEntry.setAccountNumber(adminTable.getAccountNumber());
+		//			addNewTypeEntry.setAccountType(adminTable.getAccountType());;
+		//			addNewTypeEntry.setBankBalance(adminTable.getBalance());
+		//			addNewTypeEntry.setCustomerId(adminTable.getCustomerId());
+		//			customerRepository.save(addNewTypeEntry);
+		return customerId;
+	}
 
 	public AccountDetail viewAccountDetails(long accountNumber) {
 		// TODO Auto-generated method stub
 		AccountDetail accDetail = genericRepository.find(AccountDetail.class, accountNumber);
 		return accDetail;
 	}
-	
+
 	public long addBeneficiary(Payee addPayee) {
-		
-//		Payee newPayee = new Payee();
-//		PayeeCompound compKey = new PayeeCompound();
-//		newPayee.setBeneficiaryName(beneficiaryName);
-//		newPayee.setNickName(nickName);
-//		newPayee.setCompoundKey(beneficiaryAccount);
-//		compKey.setBeneficiaryAccount(beneficiaryAccount);
-//		newPayee.setCompoundKey(compKey);
-		
+
+		//		Payee newPayee = new Payee();
+		//		PayeeCompound compKey = new PayeeCompound();
+		//		newPayee.setBeneficiaryName(beneficiaryName);
+		//		newPayee.setNickName(nickName);
+		//		newPayee.setCompoundKey(beneficiaryAccount);
+		//		compKey.setBeneficiaryAccount(beneficiaryAccount);
+		//		newPayee.setCompoundKey(compKey);
+
 		Payee newPayee = (Payee) customerRepository.save(addPayee);
 		//Payee 
 		return addPayee.getCompoundKey().getBeneficiaryAccount().getAccountNumber();
+	}
+
+	public List<Long> getAccounts(long custId){
+		return customerRepository.fetchAccounts(custId);
 	}
 }
