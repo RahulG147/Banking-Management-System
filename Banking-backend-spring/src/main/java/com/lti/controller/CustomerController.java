@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -279,6 +280,17 @@ public class CustomerController {
 		}
 		
 		
+		@DeleteMapping("/remove")
+		public Status rejectRequest(@RequestParam ("referenceId") Long ref) {
+			//int res =  customerService.remove(ref);
+			
+			customerService.deleteRow(ref);
+			Status status = new  Status();
+			status.setStatus(true);
+			status.setMessage("Request rejected successfully");
+			
+			return status;
+		}
 
 		@PostMapping("/pic-upload")
 		public Status upload(Picture picDetails) {

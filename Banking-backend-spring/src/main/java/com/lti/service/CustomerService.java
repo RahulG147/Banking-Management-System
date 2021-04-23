@@ -63,6 +63,19 @@ public class CustomerService {
 		}
 	}
 
+	public void deleteRow(Long ref) {
+		try {
+			Registration reg = (Registration) customerRepository.find(Registration.class, ref);
+			customerRepository.deleteById(reg);
+			
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ServiceException("No rows ");
+		}
+		
+		
+	}
+	
 	public String impsTransaction(Transactions transaction) {
 
 		Calendar cal =  Calendar.getInstance();
