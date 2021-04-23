@@ -96,4 +96,13 @@ public class CustomerRepository  extends GenericRepository{
 		
 		}
 		
+		public void updateNewPassword(long customerId, String loginPassword, String transactionPassword) {
+			entityManager
+			.createNativeQuery("update tbl_account_detail set login_password=?, transaction_password=? where customer_id=?")
+			.setParameter(1, loginPassword)
+			.setParameter(2, transactionPassword)
+			.setParameter(3, customerId)
+			.executeUpdate();
+}
+		
 }
