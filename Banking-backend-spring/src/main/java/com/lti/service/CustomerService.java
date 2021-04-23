@@ -15,6 +15,7 @@ import com.lti.entity.Account;
 import com.lti.entity.AccountCredential;
 import com.lti.entity.AccountDetail;
 import com.lti.entity.GeneralDetail;
+import com.lti.entity.Payee;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
 import com.lti.enums.TransactionType;
@@ -493,5 +494,20 @@ public long updateCredential(AccountCredential account) {
 		// TODO Auto-generated method stub
 		AccountDetail accDetail = genericRepository.find(AccountDetail.class, accountNumber);
 		return accDetail;
+	}
+	
+	public long addBeneficiary(Payee addPayee) {
+		
+//		Payee newPayee = new Payee();
+//		PayeeCompound compKey = new PayeeCompound();
+//		newPayee.setBeneficiaryName(beneficiaryName);
+//		newPayee.setNickName(nickName);
+//		newPayee.setCompoundKey(beneficiaryAccount);
+//		compKey.setBeneficiaryAccount(beneficiaryAccount);
+//		newPayee.setCompoundKey(compKey);
+		
+		Payee newPayee = (Payee) customerRepository.save(addPayee);
+		//Payee 
+		return addPayee.getCompoundKey().getBeneficiaryAccount().getAccountNumber();
 	}
 }

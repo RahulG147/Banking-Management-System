@@ -2,6 +2,7 @@ package com.lti.compoundKey;
 
 import java.io.Serializable;
 
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import com.lti.entity.AccountDetail;
@@ -10,12 +11,12 @@ import com.lti.entity.AccountDetail;
 public class PayeeCompound implements Serializable {
 
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_account_no")
 	private AccountDetail userAccount;
 	
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "beneficiary_account_no")
 	private AccountDetail beneficiaryAccount;
 

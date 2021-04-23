@@ -24,6 +24,7 @@ import com.lti.model.AdminTransactionView;
 import com.lti.model.CredentialStatus;
 import com.lti.model.Login;
 import com.lti.model.LoginStatus;
+import com.lti.model.NewBeneficiaryStatus;
 import com.lti.model.NewPasswordStatus;
 import com.lti.model.Picture;
 import com.lti.model.RegisterStatus;
@@ -33,6 +34,7 @@ import com.lti.model.Transactions;
 import com.lti.entity.Account;
 import com.lti.entity.AccountCredential;
 import com.lti.entity.AccountDetail;
+import com.lti.entity.Payee;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
 import com.lti.service.CustomerService;
@@ -425,4 +427,23 @@ public class CustomerController {
 				return status;
 		}
 }
+		
+		@PostMapping("/addBeneficiary")
+		public NewBeneficiaryStatus addNewBeneficiary(@RequestBody Payee payee) {
+			
+			try {
+				long id = customerService.addBeneficiary(payee);
+				NewBeneficiaryStatus status = new NewBeneficiaryStatus();
+				status.setStatus(true);
+				status.setMessage("Beneficiary added");
+				status.setBeneficiaryAccountNumber(id);
+				return status;
+			}
+			catch(ServiceException e) {
+				NewBeneficiaryStatus status = new NewBeneficiaryStatus();
+				status.setStatus(false);
+				status.setMessage(e.getMessage());
+				return status;
+			}
+		}
 }
