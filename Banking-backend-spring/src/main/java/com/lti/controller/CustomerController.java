@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lti.model.AccountSummary;
 import com.lti.model.AdminGetRegisterStatus;
 import com.lti.model.AdminTransactionView;
 import com.lti.model.CredentialStatus;
@@ -30,6 +31,7 @@ import com.lti.model.TransactionStatus;
 import com.lti.model.Transactions;
 import com.lti.entity.Account;
 import com.lti.entity.AccountCredential;
+import com.lti.entity.AccountDetail;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
 import com.lti.service.CustomerService;
@@ -388,4 +390,27 @@ public class CustomerController {
 				return status;
 			}
 		}
+		
+		@GetMapping("/accountSummary")
+		public AccountSummary accountSummary(@RequestParam("accountNumber") long accountNumber) {
+			
+			try {
+				AccountDetail detail = (AccountDetail) customerService.viewAccountDetails(accountNumber);
+				
+				AccountSummary acc = new AccountSummary();
+				acc.setAccountNumber(detail.getAccountNumber());
+				acc.setAccountType(detail.getAccountType());
+				acc.setBankBalance(detail.getBankBalance());
+				acc.setStatus(true);
+				acc.setMessage("Customer is present");
+				
+				return acc;
+			}
+			catch(ServiceException e) {
+				AccountSummary status = new AccountSummary();
+				status.setStatus(false);
+				status.setMessage(e.getMessage());	
+				return status;
+		}
+}
 }

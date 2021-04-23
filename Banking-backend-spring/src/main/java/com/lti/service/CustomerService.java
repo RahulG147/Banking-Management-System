@@ -475,4 +475,10 @@ public long updateCredential(AccountCredential account) {
 //			customerRepository.save(addNewTypeEntry);
 			return customerId;
 		}
+
+	public AccountDetail viewAccountDetails(long accountNumber) {
+		// TODO Auto-generated method stub
+		AccountDetail accDetail = genericRepository.find(AccountDetail.class, accountNumber);
+		return accDetail;
+	}
 }
