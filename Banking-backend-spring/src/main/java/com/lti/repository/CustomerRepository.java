@@ -98,6 +98,14 @@ public class CustomerRepository  extends GenericRepository{
 				.getSingleResult() == 1 ? true : false;
 
 	}
+	
+	public long fetchAccNoByOtp(String otp) {
+		return (Long)
+				entityManager
+				.createQuery("select o.fromAccount from Otp o where o.otp = :otp")
+				.setParameter("otp", otp)
+				.getSingleResult();
+	}
 
 	public void updateNewPassword(long customerId, String loginPassword, String transactionPassword) {
 		entityManager

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.mail.MessagingException;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import com.lti.model.Login;
 import com.lti.model.LoginStatus;
 import com.lti.model.NewBeneficiaryStatus;
 import com.lti.model.NewPasswordStatus;
+import com.lti.model.OtpStatus;
 import com.lti.model.Picture;
 import com.lti.model.RegisterStatus;
 import com.lti.model.Status;
@@ -34,6 +37,7 @@ import com.lti.model.Transactions;
 import com.lti.entity.Account;
 import com.lti.entity.AccountCredential;
 import com.lti.entity.AccountDetail;
+import com.lti.entity.Otp;
 import com.lti.entity.Payee;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
@@ -93,8 +97,26 @@ public class CustomerController {
 		}
 	}
 	
+	@PostMapping("/otp")
+	public OtpStatus otp(@RequestBody Otp otp){
+		try{
+			long accNo = customerService.validateOtp(otp.getOtp());
+			OtpStatus o = new OtpStatus();
+			o.setStatus(true);
+			o.setMessage("Valid OTP!");
+			return o;
+		}
+		catch(NoResultException e){
+			OtpStatus o = new OtpStatus();
+			o.setStatus(false);
+			o.setMessage("Invalid OTP!");
+			return o;
+		}
+	}
+
+	
 	@PostMapping("/impstransaction")
-	public TransactionStatus imps(@RequestBody Transactions transaction) {
+	public TransactionStatus imps(@RequestBody Transactions transaction) throws MessagingException {
 		try {
 			String referenceId = customerService.impsTransaction(transaction);
 			

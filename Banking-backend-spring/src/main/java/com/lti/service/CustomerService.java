@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ public class CustomerService {
 	@Autowired
 	EmailService emailService;
 
+	@Autowired
+	OtpService otpService;
+	
 	@Autowired
 	private CustomerRepository customerRepository;
 
@@ -89,8 +94,21 @@ public class CustomerService {
 		return details;
 	}
 	
-	public String impsTransaction(Transactions transaction) {
-
+	public long validateOtp(String otp) {
+		try{
+			 long accNo = customerRepository.fetchAccNoByOtp(otp);
+			 return accNo;
+		}
+		catch(ServiceException e){
+			throw new ServiceException("Invalid Otp");
+		}
+		
+	}
+	
+	public String impsTransaction(Transactions transaction) throws MessagingException {
+		
+		String email = "";
+		
 		Calendar cal =  Calendar.getInstance();
 		try {
 			AccountDetail acc1 = genericRepository.find(AccountDetail.class, transaction.getFromAccount());
@@ -112,6 +130,8 @@ public class CustomerService {
 						throw new ServiceException("Insufficient Balance");
 					}
 					else {
+						otpService.sendOtpMessage(email, acc1);
+						
 						if(transaction.getAmount()<10000.00) {
 							acc1.setBankBalance(acc1.getBankBalance()-transaction.getAmount()-2.50);
 						}
