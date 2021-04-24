@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.lti.entity.AccountDetail;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
 
@@ -28,10 +29,12 @@ public class CustomerRepository  extends GenericRepository{
 				.getSingleResult();
 	}
 	//admin part...later on change to AdminRepository	
-	public List<Transaction> fetchTransactionAdmin() {
-		List<Transaction> resultList = (List<Transaction>)
+	public List<Transaction> fetchTransactionAdmin(Long fromAccount,Long toAccount) {
+			List<Transaction> resultList = (List<Transaction>)
 				entityManager
-				.createQuery("select t from Transaction t")
+				.createQuery("select t from Transaction t where t.fromAccount.accountNumber = :from or t.toAccount.accountNumber = :to")
+				.setParameter("from", fromAccount)
+				.setParameter("to", toAccount)
 				.getResultList();
 		return resultList;
 	}
@@ -113,5 +116,23 @@ public class CustomerRepository  extends GenericRepository{
 				.getResultList();
 		return resultList;
 	}
+	
+	public List<AccountDetail> fetchDetailsByCustomerId(long custId) {
+		List<AccountDetail> detail = (List<AccountDetail>)
+				entityManager
+				.createQuery("SELECT a.accountNumber,a.accountType,a.bankBalance FROM AccountDetail a  WHERE a.account.customerId = :cust ")
+				.setParameter("cust",custId)
+				.getResultList();
+				return detail;
+	}
+	
+	public List<AccountDetail> fetchDetailsforAdmin() {
+		List<AccountDetail> detail = (List<AccountDetail>)
+				entityManager
+				.createQuery("SELECT a.accountNumber,a.accountType,a.bankBalance FROM AccountDetail a ")
+				.getResultList();
+				return detail;
+	}
+	
 
 }

@@ -77,6 +77,18 @@ public class CustomerService {
 
 	}
 
+	public List<AccountDetail> getDetailsOfPerticularCustomer(Long custId) {
+		
+		List<AccountDetail> details = customerRepository.fetchDetailsByCustomerId(custId);
+		return details;
+	}
+	
+	public List<AccountDetail> getDetailsForAdmin() {
+		
+		List<AccountDetail> details = customerRepository.fetchDetailsforAdmin();
+		return details;
+	}
+	
 	public String impsTransaction(Transactions transaction) {
 
 		Calendar cal =  Calendar.getInstance();
@@ -344,9 +356,9 @@ public class CustomerService {
 	}
 
 	//admin part below
-	public List<Transaction> transactionViewByAdmin() {
+	public List<Transaction> transactionViewByAdmin(Long fromAccount,Long toAccount) {
 		try {
-			List<Transaction> list = customerRepository.fetchTransactionAdmin();
+			List<Transaction> list = customerRepository.fetchTransactionAdmin(fromAccount,toAccount);
 			return list;
 		}
 		catch(EmptyResultDataAccessException e) {
@@ -398,6 +410,7 @@ public class CustomerService {
 		customerRepository.insertIntoAccontType(updateAccount.getAccountNumber(),updateAccount.getAccountType(),updateAccount.getBalance(),updateAccount.getCustomerId());
 
 		Account acc =(Account) customerRepository.find(Account.class,updateAccount.getCustomerId());
+		AccountDetail ad =(AccountDetail) customerRepository.find(AccountDetail.class,updateAccount.getAccountNumber());
 		System.out.println(acc.getCustomerId());
 		GeneralDetail details = new GeneralDetail();
 		details.setAadhaarNo(reg.getAadhaarNo());//pk
@@ -408,6 +421,7 @@ public class CustomerService {
 		details.setPanCard(reg.getPanCard());
 		details.setOccupation(reg.getOccupation());
 		details.setGrossIncome(reg.getAnnualIncome());
+		details.setBalance(ad.getBankBalance());
 		//acc.setGeneralDetail(details);
 		customerRepository.save(details);
 		customerRepository.deleteById(reg);

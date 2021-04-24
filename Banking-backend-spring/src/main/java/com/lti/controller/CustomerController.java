@@ -154,11 +154,49 @@ public class CustomerController {
 	}
 	
 	//below codes are for admin part...change to Admin Controller later on
+	@GetMapping("/accountview")
+	public List<AccountDetail> basicDetails(@RequestParam ("customerId") Long custId) {
+		try {
+			List<AccountDetail> detail = customerService.getDetailsOfPerticularCustomer(custId);
+			Status status = new  Status();
+			status.setStatus(true);
+			status.setMessage("Retrieved Transactions!");
+			return detail;
+		}
+		catch(ServiceException e) {
+			Status status = new  Status();
+			List<AccountDetail> detail =new ArrayList<AccountDetail>();
+			status.setStatus(false);
+			status.setMessage(e.getMessage());		
+			return detail;
+			
+			
+		}
+	}
 	
-		@GetMapping("/TransactionViewAdmin")
-		public List<AdminTransactionView> transaction() {
+	@GetMapping("/adminaccountview")
+	public List<AccountDetail> basicDetails() {
+		try {
+			List<AccountDetail> detail = customerService.getDetailsForAdmin();
+			Status status = new  Status();
+			status.setStatus(true);
+			status.setMessage("Retrieved Transactions!");
+			return detail;
+		}
+		catch(ServiceException e) {
+			Status status = new  Status();
+			List<AccountDetail> detail =new ArrayList<AccountDetail>();
+			status.setStatus(false);
+			status.setMessage(e.getMessage());		
+			return detail;
+			
+			
+		}
+	}
+	@GetMapping("/TransactionViewAdmin")
+	public List<AdminTransactionView> transaction(@RequestParam("accNumber") Long acc) {
 			try {
-				List<Transaction> list =  customerService.transactionViewByAdmin();
+				List<Transaction> list =  customerService.transactionViewByAdmin(acc,acc);
 				List<AdminTransactionView> viewList = new ArrayList<AdminTransactionView>();
 			
 				for(Transaction t :list) {

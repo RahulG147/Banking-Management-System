@@ -48,6 +48,16 @@ public class GeneralDetail implements Serializable{
 	@Column(name="gst_number")
 	private String gstNumber;
 	
+	@Column(name="balance")
+	private Double balance;
+	
+	public Double getBalance() {
+		return balance;
+	}
+	public void setBalance(Double balance) {
+		this.balance = balance;
+	}
+	
 	public String getRevenueRegisterNo() {
 		return revenueRegisterNo;
 	}
