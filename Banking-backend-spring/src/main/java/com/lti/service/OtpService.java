@@ -21,7 +21,7 @@ public class OtpService {
 	
 	CustomerService service = new CustomerService();
 	
-	public void sendOtpMessage(String email, AccountDetail accDetail) throws MessagingException {
+	public String sendOtp(String email) throws MessagingException {
 	
 		String NumericString = "1234567890";
 		StringBuilder sb = new StringBuilder(6);
@@ -31,21 +31,26 @@ public class OtpService {
 			sb.append(NumericString.charAt(index));
 		}
 		String OTP = sb.toString();
-		Otp otp = new Otp();
-		otp.setOtp(OTP);
-		otp.setDateTime(LocalDateTime.now());
-		otp.setFromAccount(accDetail);
-		 MimeMessage msg = javaMailSender.createMimeMessage();
+//		Otp otp = new Otp();
+//		otp.setOtp(OTP);
+//		otp.setDateTime(LocalDateTime.now());
+//		otp.setFromAccount(accDetail);
+		 //MimeMessage msg = javaMailSender.createMimeMessage();
 
 		 String message = "Your One Time Password is" + OTP +" \nPlease don't share your OTP with anyone.";
 		 
-	        MimeMessageHelper helper = new MimeMessageHelper(msg, true);
+	        //MimeMessageHelper helper = new MimeMessageHelper(msg, true);
 
-	        helper.setFrom("serviceslti@hotmail.com");
-	        helper.setTo(email);
-	        helper.setSubject("OTP Confirmation");
-	        helper.setText(message, true);
-	        javaMailSender.send(msg);
+//	        helper.setFrom("serviceslti@hotmail.com");
+//	        helper.setTo(email);
+//	        helper.setSubject("OTP Confirmation");
+//	        helper.setText(message, true);
+//	        javaMailSender.send(msg);
+		 EmailService eService = new EmailService();
+		 System.out.println(email);
+		 eService.sendEmail(email, message, "OTP Confirmation");
+	        
+	        return OTP;
    }
 	
 	

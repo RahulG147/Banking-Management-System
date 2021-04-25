@@ -47,13 +47,13 @@ public class CustomerService {
 			throw new ServiceException("Customer already registered !");
 		else {
 			Registration updateCustomer = (Registration) customerRepository.save(customer);
-			/*String subject = "Recieved Registration Request";
+			String subject = "Recieved Registration Request";
 			String text = "Hi " + customer.getFirstName() + customer.getLastName()
 						+ ", we have received a request from you for registering with our bank.\n" 
 						+ "Your request will be approved when all the necessary documents are uploaded. \n"
 						+ "This is your service reference number " + updateCustomer.getReferenceNo();
 
-			emailService.sendEmailForNewRegistration(customer.getEmailId(),text,subject);*/
+			emailService.sendEmail(customer.getEmailId(),text,subject);
 			return updateCustomer.getReferenceNo();
 		}
 	}
@@ -130,7 +130,7 @@ public class CustomerService {
 						throw new ServiceException("Insufficient Balance");
 					}
 					else {
-						otpService.sendOtpMessage(email, acc1);
+						//otpService.sendOtp(email);
 						
 						if(transaction.getAmount()<10000.00) {
 							acc1.setBankBalance(acc1.getBankBalance()-transaction.getAmount()-2.50);
@@ -447,7 +447,7 @@ public class CustomerService {
 		customerRepository.deleteById(reg);
 		System.out.println(accReg.getReferenceNo());
 
-		/*if(customerRepository.isReferenceIdPresent(accReg.getReferenceNo())){
+		if(customerRepository.isReferenceIdPresent(accReg.getReferenceNo())){
 			String subject = "Registration Confirmation";
 			String text = "Hi " + accReg.getFirstName() + accReg.getLastName()
 						+ " Here are your login credentials\n" 
@@ -457,15 +457,15 @@ public class CustomerService {
 						+ "\nTransaction Password: " + account.getTransactionPassword()
 						+ "\nThank you!";
 
-			emailService.sendEmailForNewRegistration(accReg.getEmailId(),text,subject);*/
+			emailService.sendEmail(accReg.getEmailId(),text,subject);
 		return updateAccount.getCustomerId();
-		/*}
+		}
 
 		else {
 
 			throw new ServiceException("No such customer registered");
 
-		}*/
+		}
 	}
 
 

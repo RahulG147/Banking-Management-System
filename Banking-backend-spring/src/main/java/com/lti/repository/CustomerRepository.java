@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.lti.entity.Account;
 import com.lti.entity.AccountDetail;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
@@ -140,6 +141,10 @@ public class CustomerRepository  extends GenericRepository{
 				.createQuery("SELECT a.accountNumber,a.accountType,a.bankBalance FROM AccountDetail a ")
 				.getResultList();
 				return detail;
+	}
+	
+	public Account findCustomerByCustomerId(long customerId){
+		return entityManager.find(Account.class, customerId);
 	}
 	
 

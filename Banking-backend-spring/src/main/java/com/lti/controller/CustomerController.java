@@ -34,6 +34,7 @@ import com.lti.model.RegisterStatus;
 import com.lti.model.Status;
 import com.lti.model.TransactionStatus;
 import com.lti.model.Transactions;
+import com.lti.repository.CustomerRepository;
 import com.lti.entity.Account;
 import com.lti.entity.AccountCredential;
 import com.lti.entity.AccountDetail;
@@ -42,6 +43,7 @@ import com.lti.entity.Payee;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
 import com.lti.service.CustomerService;
+import com.lti.service.OtpService;
 import com.lti.service.ServiceException;
 
 
@@ -49,6 +51,9 @@ import com.lti.service.ServiceException;
 @CrossOrigin
 public class CustomerController {
 
+	@Autowired
+	private CustomerRepository custRepo;
+	
 	@Autowired
 	private CustomerService customerService;
 	
@@ -112,6 +117,15 @@ public class CustomerController {
 			o.setMessage("Invalid OTP!");
 			return o;
 		}
+	}
+	
+	@GetMapping("/sendOtp")
+	public String otp(@RequestParam("customerId") int id) throws MessagingException{
+		OtpService o = new OtpService();
+		Account acc = custRepo.findCustomerByCustomerId(id);
+		System.out.println("--------------------------------------");
+		System.out.println(acc.getRegistration().getEmailId());
+		return o.sendOtp(acc.getRegistration().getEmailId());
 	}
 
 	
@@ -361,7 +375,7 @@ public class CustomerController {
 			long referenceId = picDetails.getReferenceId();
 			//long referenceId = (long)62;
 			
-			String imgUploadLocation = "d:/uploads/";
+			String imgUploadLocation = "c:/uploads/";
 			
 			String uploadedFileName1 = picDetails.getAadharPic().getOriginalFilename();
 			String newFileName1 = referenceId + "-" + uploadedFileName1;
@@ -428,7 +442,7 @@ public class CustomerController {
 			String targetFile4 = tempDownloadPath + registration.getGstProof();
 			
 			//reading the original location where the image is present
-			String uploadedImagesPath = "E:\\uploads\\";
+			String uploadedImagesPath = "C:\\uploads\\";
 			String sourceFile1 = uploadedImagesPath + registration.getAadharPic();
 			String sourceFile2 = uploadedImagesPath + registration.getPanPic();
 			String sourceFile3 = uploadedImagesPath + registration.getLightBill();

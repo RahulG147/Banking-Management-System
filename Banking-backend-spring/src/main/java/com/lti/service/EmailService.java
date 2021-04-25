@@ -10,12 +10,14 @@ public class EmailService {
 
 	@Autowired
 	private MailSender mailSender;
-	public void sendEmailForNewRegistration(String email,String text,String subject) {
+	
+	public void sendEmail(String email,String text,String subject) {
 		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom("serviceslti@hotmail.com");
+		message.setFrom("serviceslti87@gmail.com");
 		message.setTo(email);
 		message.setSubject(subject);
 		message.setText(text);
+		System.out.println(message.getTo());
 		mailSender.send(message);
 	}
 }
