@@ -601,11 +601,11 @@ public class CustomerController {
 		public NewBeneficiaryStatus addNewBeneficiary(@RequestBody Payee payee) {
 			
 			try {
-				long id = customerService.addBeneficiary(payee);
+				customerService.addBeneficiary(payee);
 				NewBeneficiaryStatus status = new NewBeneficiaryStatus();
 				status.setStatus(true);
 				status.setMessage("Beneficiary added");
-				status.setBeneficiaryAccountNumber(id);
+				//status.setBeneficiaryAccountNumber(id);
 				return status;
 			}
 			catch(ServiceException e) {

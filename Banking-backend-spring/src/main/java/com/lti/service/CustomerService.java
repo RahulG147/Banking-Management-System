@@ -546,7 +546,7 @@ public class CustomerService {
 		return accDetail;
 	}
 
-	public long addBeneficiary(Payee addPayee) {
+	public void addBeneficiary(Payee addPayee) {
 
 		//		Payee newPayee = new Payee();
 		//		PayeeCompound compKey = new PayeeCompound();
@@ -558,7 +558,7 @@ public class CustomerService {
 
 		Payee newPayee = (Payee) customerRepository.save(addPayee);
 		//Payee 
-		return addPayee.getCompoundKey().getBeneficiaryAccount().getAccountNumber();
+		//return newPayee.getCompoundKey().getBeneficiaryAccount().getAccountNumber();
 	}
 
 	public List<Long> getAccounts(long custId){
