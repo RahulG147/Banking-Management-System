@@ -534,8 +534,8 @@ public class CustomerController {
 	}
 
 	@GetMapping("/getTransactionsByMonth")
-	public List<Transaction> getTransactionsBasedOnMonth(@RequestParam("customerId") Long customerId,YearMonth from , YearMonth to ){
-		try {
+	public List<Transaction> getTransactionsBasedOnMonth(@RequestParam("customerId") Long customerId,String from , String to ){
+			try {
 			CustomerRepository cust = new CustomerRepository(); 
 			List<Transaction> list = customerService.fetchTransactionsByMonth(customerId,from,to);
 			Status status = new Status();

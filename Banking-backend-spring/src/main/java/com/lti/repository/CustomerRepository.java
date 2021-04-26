@@ -1,5 +1,6 @@
 package com.lti.repository;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -154,42 +155,39 @@ public class CustomerRepository  extends GenericRepository{
 
 	//Check Query ...including date is missing 
 	public List<Transaction> allTransactionsByDate(Long fromAccount,String from,String to) {
-		/*System.out.println(from);
-		LocalDateFormater formatter = new SimpleDateFormat("yyyy/mm/dd", Locale.ENGLISH);
-            try {
-				LocalDate fDate = formatter.parse(from);
-				Date tDate = formatter.parse(to);
-		 */
+		LocalDate fdate = LocalDate.parse(from);
+		LocalDate tdate = LocalDate.parse(to);
 		List<Transaction> transaction = (List<Transaction>)
-				entityManager
-				.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber,t.transactionDate,t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where t.transactionDate between to_timestamp( '2001/05/31 00:00:00'  , 'YYYY/MM/DD HH24:MI:SS') and to_timestamp( :to , 'YYYY/MM/DD HH:MI:SS') and t.fromAccount.accountNumber = :fromAccount  ")
-				.setParameter("fromAccount",fromAccount)
-				//.setParameter("from", from)
-				.setParameter("to",to)
-				//.setParameter("from", new java.util.Date(), TemporalType.TIMESTAMP)
-				//.setParameter("to", new java.util.Date(), TemporalType.TIMESTAMP)
-				.setMaxResults(2) 
-				.getResultList();
-		return transaction;
-		/*} catch (java.text.ParseException e) {
-				e.printStackTrace();
-				return null;
-				}*/
+		entityManager
+        .createNativeQuery("SELECT  FROM_ACCOUNT, TO_ACCOUNT, TRANSACTION_DATE, MESSAGE, TR_AMOUNT, TR_MODE, TR_STATUS from tbl_transaction_detail where TO_DATE(TO_CHAR(TRANSACTION_DATE, 'YYYY-MM-DD'),'YYYY-MM-DD') between  ?  and ?  and FROM_ACCOUNT = ?  ")
+        .setParameter(3, fromAccount)
+        .setParameter(1, fdate)
+        .setParameter(2, tdate)
+        .setMaxResults(2)
+        .getResultList();
+        return transaction;
 	}
-	//.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber, to_date(to_char(TRANSACTION_DATE,'yyyy/mm/dd')),t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where to_date(to_char(TRANSACTION_DATE,'yyyy/mm/dd')) between TO_DATE(  :from,'yyyy/mm/dd') and  TO_DATE( :to,'yyyy/mm/dd') and t.fromAccount.accountNumber = :fromAccount  ")
-	//.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber,t.transactionDate,t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where  t.transactionDate >= to_timestamp( :from, 'yyyy/mm/dd hh24:mi:ss') and t.transactionDate <= to_timestamp( :to, 'yyyy/mm/dd hh24:mi:ss') and t.fromAccount.accountNumber = :fromAccount  ")
 
-
-	public List<Transaction> allTransactionByMonth(Long fromAccount,YearMonth from,YearMonth to){
-		List<Transaction> transaction = (List<Transaction>)
-				entityManager
-				.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber,t.transactionDate,t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where t.fromAccount.accountNumber = :fromAccount  ")
-				.setParameter("fromAccount",fromAccount)
-				//.setParameter("from", from)
-				//.setParameter("to",to)
-				.getResultList();
-		return transaction;
-	}
+	public List<Transaction> allTransactionByMonth(Long fromAccount,String from,String to){
+		LocalDate fdate1 = LocalDate.parse(from);
+			LocalDate tdate1 = LocalDate.parse(to);
+//			String s1 = fdate1+"-01";
+//			String s2 = tdate1+"-31";
+//			
+//			System.out.println(s1+" "+s2);
+//			LocalDate fdate = LocalDate.parse(s1);
+//			LocalDate tdate = LocalDate.parse(s2);
+		//	System.out.println(fdate+" "+tdate);
+			List<Transaction> transaction = (List<Transaction>)
+					entityManager
+					.createNativeQuery("SELECT  FROM_ACCOUNT, TO_ACCOUNT, TRANSACTION_DATE, MESSAGE, TR_AMOUNT, TR_MODE, TR_STATUS from tbl_transaction_detail where TO_DATE(TO_CHAR(TRANSACTION_DATE, 'YYYY-MM'),'YYYY-MM') BETWEEN   ?  and ?  and FROM_ACCOUNT = ?  ")
+			        .setParameter(3, fromAccount)
+			        .setParameter(1, fdate1)
+			        .setParameter(2, tdate1)
+			        .getResultList();
+			return transaction;
+		}
+	
 	//and  t.transactionDate  between to_date(:from, 'yyyy/mm/dd') and to_date(:to, 'yyyy/mm/dd')
 
 	public List<Transaction> getAllTransactions(Long acc){

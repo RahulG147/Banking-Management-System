@@ -571,8 +571,8 @@ public class CustomerService {
 		return transactions;
 	}
 
-	public List<Transaction> fetchTransactionsByMonth(Long customerId,YearMonth from,YearMonth to){
-		List<Long> acc = customerRepository.getAccountNumber(customerId);
+	public List<Transaction> fetchTransactionsByMonth(Long customerId,String from,String to){
+			List<Long> acc = customerRepository.getAccountNumber(customerId);
 		List<Transaction> transactions =new ArrayList<Transaction>();
 		for(Long a:acc) {
 			transactions.addAll(customerRepository.allTransactionByMonth(a,from,to));
