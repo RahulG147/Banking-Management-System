@@ -394,7 +394,7 @@ public class CustomerController {
 		long referenceId = picDetails.getReferenceId();
 		//long referenceId = (long)62;
 
-		String imgUploadLocation = "c:/uploads/";
+		String imgUploadLocation = "e:/uploads/";
 
 		String uploadedFileName1 = picDetails.getAadharPic().getOriginalFilename();
 		String newFileName1 = referenceId + "-" + uploadedFileName1;
@@ -408,15 +408,11 @@ public class CustomerController {
 		String newFileName3 = referenceId + "-" + uploadedFileName3;
 		String targetFileName3 = imgUploadLocation + newFileName3;
 
-		String uploadedFileName4 = picDetails.getGstProof().getOriginalFilename();
-		String newFileName4 = referenceId + "-" + uploadedFileName4;
-		String targetFileName4 = imgUploadLocation + newFileName4;
 
 		try {
 			FileCopyUtils.copy(picDetails.getAadharPic().getInputStream(), new FileOutputStream(targetFileName1));
 			FileCopyUtils.copy(picDetails.getPanPic().getInputStream(), new FileOutputStream(targetFileName2));
 			FileCopyUtils.copy(picDetails.getLightBill().getInputStream(), new FileOutputStream(targetFileName3));
-			FileCopyUtils.copy(picDetails.getGstProof().getInputStream(), new FileOutputStream(targetFileName4));
 		}
 		catch(IOException e) {
 			e.printStackTrace(); //hope no error would occur
@@ -425,7 +421,7 @@ public class CustomerController {
 			status.setMessage("Picture upload failed!");
 		}
 		//System.out.println(newFileName1+newFileName2+newFileName3+newFileName4);
-		customerService.updatePicture(referenceId, newFileName1, newFileName2, newFileName3, newFileName4);
+		customerService.updatePicture(referenceId, newFileName1, newFileName2, newFileName3);
 
 		Status status = new Status();
 		status.setStatus(true);
@@ -458,20 +454,17 @@ public class CustomerController {
 		String targetFile1 = tempDownloadPath + registration.getAadharPic();
 		String targetFile2 = tempDownloadPath + registration.getPanPic();
 		String targetFile3 = tempDownloadPath + registration.getLightBill();
-		String targetFile4 = tempDownloadPath + registration.getGstProof();
 
 		//reading the original location where the image is present
-		String uploadedImagesPath = "C:\\uploads\\";
+		String uploadedImagesPath = "e:\\uploads\\";
 		String sourceFile1 = uploadedImagesPath + registration.getAadharPic();
 		String sourceFile2 = uploadedImagesPath + registration.getPanPic();
 		String sourceFile3 = uploadedImagesPath + registration.getLightBill();
-		String sourceFile4 = uploadedImagesPath + registration.getGstProof();
 
 		try {
 			FileCopyUtils.copy(new File(sourceFile1), new File(targetFile1));
 			FileCopyUtils.copy(new File(sourceFile2), new File(targetFile2));
 			FileCopyUtils.copy(new File(sourceFile3), new File(targetFile3));
-			FileCopyUtils.copy(new File(sourceFile4), new File(targetFile4));
 		}
 		catch (IOException e) {
 			e.printStackTrace(); //hoping for no error will occur

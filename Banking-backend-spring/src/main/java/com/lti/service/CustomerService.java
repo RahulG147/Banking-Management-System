@@ -507,13 +507,12 @@ public class CustomerService {
 		}
 	}
 
-	public void updatePicture(long referenceId, String newFileName1, String newFileName2, String newFileName3, String newFileName4) {
-		System.out.println(newFileName1+newFileName2+newFileName3+newFileName4);
+	public void updatePicture(long referenceId, String newFileName1, String newFileName2, String newFileName3) {
+		System.out.println(newFileName1+newFileName2+newFileName3);
 		Registration registration = customerRepository.find(Registration.class, referenceId);
 		registration.setAadharPic(newFileName1);
 		registration.setPanPic(newFileName2);
 		registration.setLightBill(newFileName3);
-		registration.setGstProof(newFileName4);
 
 		customerRepository.save(registration);
 
