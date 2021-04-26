@@ -50,9 +50,9 @@ public class CustomerService {
 			Registration updateCustomer = (Registration) customerRepository.save(customer);
 			String subject = "Recieved Registration Request";
 			String text = "Hi " + customer.getFirstName() + customer.getLastName()
-						+ ", we have received a request from you for registering with our bank.\n" 
-						+ "Your request will be approved when all the necessary documents are uploaded. \n"
-						+ "This is your service reference number " + updateCustomer.getReferenceNo();
+            + ", we have received a request from you for registering with our bank.\n"
+            + "Your details are under verification.\n You will get a confirmation mail, once your account is approved.\n"
+            + "Please upload all the necessary documents. \n Thank you!";
 
 			emailService.sendEmail(customer.getEmailId(),text,subject);
 			return updateCustomer.getReferenceNo();
