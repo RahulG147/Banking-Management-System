@@ -546,7 +546,7 @@ public class CustomerService {
 		return accDetail;
 	}
 
-	public void addBeneficiary(Payee addPayee) {
+	public void addBeneficiary(Long userAcc, Long beneAcc, String beneName, String nickName) {
 
 		//		Payee newPayee = new Payee();
 		//		PayeeCompound compKey = new PayeeCompound();
@@ -556,7 +556,7 @@ public class CustomerService {
 		//		compKey.setBeneficiaryAccount(beneficiaryAccount);
 		//		newPayee.setCompoundKey(compKey);
 
-		Payee newPayee = (Payee) customerRepository.save(addPayee);
+		customerRepository.savePayee(userAcc, beneAcc, beneName, nickName);
 		//Payee 
 		//return newPayee.getCompoundKey().getBeneficiaryAccount().getAccountNumber();
 	}

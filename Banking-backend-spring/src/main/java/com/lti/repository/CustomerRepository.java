@@ -218,5 +218,15 @@ public class CustomerRepository  extends GenericRepository{
 		return entityManager.find(Account.class, customerId);
 	}
 	
+	public void savePayee(Long userAcc, Long beneAcc, String beneName, String nickName) {
+		entityManager.createNativeQuery("insert into tbl_payee (BENEFICIARY_NAME,NICK_NAME,USER_ACCOUNT_NO, BENEFICIARY_ACCOUNT_NO) values (?,?,?,?)")
+		.setParameter(1, beneName)
+		.setParameter(2, nickName)
+		.setParameter(3, userAcc)
+		.setParameter(4, beneAcc)
+		.executeUpdate();
+		
+	}
+	
 
 }
