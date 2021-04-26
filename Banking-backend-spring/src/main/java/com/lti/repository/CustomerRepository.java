@@ -1,5 +1,6 @@
 package com.lti.repository;
 
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -142,6 +143,76 @@ public class CustomerRepository  extends GenericRepository{
 				.getResultList();
 				return detail;
 	}
+	public List<Long> getAccountNumber(Long customerId){
+		List<Long> accNumbers = (List<Long>)
+				entityManager
+				.createQuery("SELECT a.accountNumber FROM AccountDetail a where a.account.customerId =:cust")
+				.setParameter("cust", customerId)
+				.getResultList();
+		return accNumbers;
+	}
+	
+	//Check Query ...including date is missing 
+	public List<Transaction> allTransactionsByDate(Long fromAccount,String from,String to) {
+		/*System.out.println(from);
+		LocalDateFormater formatter = new SimpleDateFormat("yyyy/mm/dd", Locale.ENGLISH);
+            try {
+				LocalDate fDate = formatter.parse(from);
+				Date tDate = formatter.parse(to);
+			*/
+		List<Transaction> transaction = (List<Transaction>)
+				entityManager
+				.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber,t.transactionDate,t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where t.transactionDate between to_timestamp( '2001/05/31 00:00:00'  , 'YYYY/MM/DD HH24:MI:SS') and to_timestamp( :to , 'YYYY/MM/DD HH:MI:SS') and t.fromAccount.accountNumber = :fromAccount  ")
+				.setParameter("fromAccount",fromAccount)
+				//.setParameter("from", from)
+				.setParameter("to",to)
+				//.setParameter("from", new java.util.Date(), TemporalType.TIMESTAMP)
+				//.setParameter("to", new java.util.Date(), TemporalType.TIMESTAMP)
+				.setMaxResults(2) 
+				.getResultList();
+		return transaction;
+		/*} catch (java.text.ParseException e) {
+				e.printStackTrace();
+				return null;
+				}*/
+	}
+	//.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber, to_date(to_char(TRANSACTION_DATE,'yyyy/mm/dd')),t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where to_date(to_char(TRANSACTION_DATE,'yyyy/mm/dd')) between TO_DATE(  :from,'yyyy/mm/dd') and  TO_DATE( :to,'yyyy/mm/dd') and t.fromAccount.accountNumber = :fromAccount  ")
+	//.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber,t.transactionDate,t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where  t.transactionDate >= to_timestamp( :from, 'yyyy/mm/dd hh24:mi:ss') and t.transactionDate <= to_timestamp( :to, 'yyyy/mm/dd hh24:mi:ss') and t.fromAccount.accountNumber = :fromAccount  ")
+	
+	
+	public List<Transaction> allTransactionByMonth(Long fromAccount,YearMonth from,YearMonth to){
+		List<Transaction> transaction = (List<Transaction>)
+				entityManager
+				.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber,t.transactionDate,t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where t.fromAccount.accountNumber = :fromAccount  ")
+				.setParameter("fromAccount",fromAccount)
+				//.setParameter("from", from)
+				//.setParameter("to",to)
+				.getResultList();
+		return transaction;
+	}
+	//and  t.transactionDate  between to_date(:from, 'yyyy/mm/dd') and to_date(:to, 'yyyy/mm/dd')
+
+	public List<Transaction> getAllTransactions(Long acc){
+		List<Transaction> transaction = (List<Transaction>)
+				entityManager
+				.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber,t.transactionDate,t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where t.fromAccount.accountNumber = :fromAccount  order by t.transactionDate desc ")
+				.setParameter("fromAccount",acc)
+				.getResultList();
+		return transaction;
+	}
+	
+	
+	public List<Long> fetchAccountNumberByCustomerId(Long custId){
+		List<Long> accNumber = (List<Long>)
+				entityManager
+				.createQuery("SELECT a.accountNumber from AccountDetail a where a.account.customerId = :cust ")
+				.setParameter("cust",custId)
+				.getResultList();
+		return accNumber;
+	}
+	
+
+
 	
 	public Account findCustomerByCustomerId(long customerId){
 		return entityManager.find(Account.class, customerId);

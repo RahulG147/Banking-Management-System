@@ -3,6 +3,7 @@ package com.lti.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -263,6 +264,40 @@ public class CustomerController {
 			}
 		}
 		
+	@GetMapping("/TransactionViewUser")
+	public List<AdminTransactionView> userTransaction(@RequestParam("custId") Long cust) {
+			try {
+				List<Transaction> list =  customerService.transactionViewByUser(cust);
+				List<AdminTransactionView> viewList = new ArrayList<AdminTransactionView>();
+			
+				for(Transaction t :list) {
+					System.out.println(t.getTransactionId()+" ,"+t.getFromAccount().getAccountNumber()+" -> "+t.getToAccount().getAccountNumber()+" , "+t.getAmount());
+					AdminTransactionView view1 = new  AdminTransactionView();
+					view1.setStatus(true);
+					view1.setMessage("Retrieved Transactions!");
+					view1.setTransactionId(t.getTransactionId());
+					view1.setFromAccount(t.getFromAccount().getAccountNumber());
+					view1.setToAccount(t.getToAccount().getAccountNumber());
+					view1.setAmount(t.getAmount());
+					view1.setMode(t.getModeOfTransaction().name());
+					view1.setRemark(t.getRemarks());
+					view1.setTransactionDate(t.getTransactionDate().toLocalDate());
+					viewList.add(view1);
+				}
+				
+				return viewList;
+			}
+			catch(ServiceException e) {
+				AdminTransactionView view = new  AdminTransactionView();
+				List<AdminTransactionView> viewList = new ArrayList<AdminTransactionView>();
+				view.setStatus(false);
+				view.setMessage(e.getMessage());		
+				return viewList;
+				
+				
+			}
+		}
+	
 		@GetMapping("/RequestViewByAdmin")
 		public List<AdminGetRegisterStatus> requestView() {
 			try {
@@ -502,7 +537,66 @@ public class CustomerController {
 				return status;
 		}
 }
+		@GetMapping("/getTransactionsByDate")
+		public List<Transaction> getTransactionsOfCustomerByDate(@RequestParam("customerId") Long customerId,@RequestParam(value="fromDate")  String from, @RequestParam(value="toDate") String to ){
+			try {
+				CustomerRepository cust = new CustomerRepository(); 
+				List<Transaction> list = customerService.fetchTransactionsByDate(customerId,from,to);
+				Status status = new Status();
+				status.setMessage("transactions fetched successfully !!");
+				status.setStatus(true);
+				return list;
+			}
+			catch(ServiceException e) {
+				List<Transaction> list = new ArrayList<Transaction>();
+				Status status = new Status();
+				status.setMessage(e.getMessage());
+				status.setStatus(true);
+				return list;
+			}
+		}
 		
+		@GetMapping("/getTransactionsByMonth")
+		public List<Transaction> getTransactionsBasedOnMonth(@RequestParam("customerId") Long customerId,YearMonth from , YearMonth to ){
+			try {
+				CustomerRepository cust = new CustomerRepository(); 
+				List<Transaction> list = customerService.fetchTransactionsByMonth(customerId,from,to);
+				Status status = new Status();
+				status.setMessage("transactions fetched successfully !!");
+				status.setStatus(true);
+				return list;
+			}
+			catch(ServiceException e) {
+				List<Transaction> list = new ArrayList<Transaction>();
+				Status status = new Status();
+				status.setMessage(e.getMessage());
+				status.setStatus(true);
+				return list;
+			}
+		}
+			
+			@GetMapping("/getAllTransactions")
+			public List<Transaction> getAllTransactions(@RequestParam("custId") Long custId){
+				try {
+					CustomerRepository cust = new CustomerRepository(); 
+					List<Transaction> list = customerService.fetchAllTransactions(custId);
+					Status status = new Status();
+					status.setMessage("transactions fetched successfully !!");
+					status.setStatus(true);
+					return list;
+				}
+				catch(ServiceException e) {
+					List<Transaction> list = new ArrayList<Transaction>();
+					Status status = new Status();
+					status.setMessage(e.getMessage());
+					status.setStatus(true);
+					return list;
+				}
+			
+			
+		}
+		
+			
 		@PostMapping("/addBeneficiary")
 		public NewBeneficiaryStatus addNewBeneficiary(@RequestBody Payee payee) {
 			

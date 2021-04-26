@@ -1,6 +1,7 @@
 package com.lti.service;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -374,7 +375,22 @@ public class CustomerService {
 			throw new ServiceException("Invalid account number");
 		}
 	}
-
+	public List<Transaction> transactionViewByUser(Long custId) {
+		try {
+			List<Long> accNumbers = customerRepository.fetchAccountNumberByCustomerId(custId);
+			List<Transaction> list = new ArrayList<Transaction>();
+			for(Long acc:accNumbers) {
+			list.addAll(customerRepository.fetchTransactionAdmin(acc,acc));
+			}
+			return list;
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ServiceException("No rows !!");
+		}
+	}
+	
+	
+	
 	//admin part below
 	public List<Transaction> transactionViewByAdmin(Long fromAccount,Long toAccount) {
 		try {
@@ -547,5 +563,33 @@ public class CustomerService {
 
 	public List<Long> getAccounts(long custId){
 		return customerRepository.fetchAccounts(custId);
+	}
+	
+	public List<Transaction> fetchTransactionsByDate(Long customerId,String from,String to){
+		List<Long> acc = customerRepository.getAccountNumber(customerId);
+		List<Transaction> transactions =new ArrayList<Transaction>();
+		for(Long a:acc) {
+			transactions.addAll(customerRepository.allTransactionsByDate(a,from,to));
+		}
+		return transactions;
+	}
+	
+	public List<Transaction> fetchTransactionsByMonth(Long customerId,YearMonth from,YearMonth to){
+		List<Long> acc = customerRepository.getAccountNumber(customerId);
+		List<Transaction> transactions =new ArrayList<Transaction>();
+		for(Long a:acc) {
+			transactions.addAll(customerRepository.allTransactionByMonth(a,from,to));
+		}
+		return transactions;
+	}
+	public List<Transaction> fetchAllTransactions(Long custId){
+		List<Long> acc = customerRepository.getAccountNumber(custId);
+		List<Transaction> transactions =new ArrayList<Transaction>();
+		for(Long a:acc) {
+			transactions.addAll(customerRepository.getAllTransactions(a));
+		}
+		//List<Transaction> transactions =customerRepository.getAllTransactions(accNumber);
+		
+		return transactions;
 	}
 }
