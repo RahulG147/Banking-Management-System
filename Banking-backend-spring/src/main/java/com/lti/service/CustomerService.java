@@ -35,7 +35,7 @@ public class CustomerService {
 
 	@Autowired
 	OtpService otpService;
-	
+
 	@Autowired
 	private CustomerRepository customerRepository;
 
@@ -50,13 +50,26 @@ public class CustomerService {
 			Registration updateCustomer = (Registration) customerRepository.save(customer);
 			String subject = "Recieved Registration Request";
 			String text = "Hi " + customer.getFirstName() + customer.getLastName()
-            + ", we have received a request from you for registering with our bank.\n"
-            + "Your details are under verification.\n You will get a confirmation mail, once your account is approved.\n"
-            + "Please upload all the necessary documents. \n Thank you!";
+			+ ", we have received a request from you for registering with our bank.\n"
+			+ "Your details are under verification.\n You will get a confirmation mail, once your account is approved.\n"
+			+ "Please upload all the necessary documents. \n Thank you!";
 
 			emailService.sendEmail(customer.getEmailId(),text,subject);
 			return updateCustomer.getReferenceNo();
 		}
+	}
+
+	public String sendOtp(String email) {
+
+		String otp = otpService.generateOtp();
+
+		String subject = "Request for OTP for transaction";
+		String text = "The OTP for your transaction is "+otp;
+
+		emailService.sendEmail(email,text,subject);
+		return otp;
+
+
 	}
 
 	public Account login(long customerId, String loginPassword) {
@@ -84,32 +97,32 @@ public class CustomerService {
 	}
 
 	public List<AccountDetail> getDetailsOfPerticularCustomer(Long custId) {
-		
+
 		List<AccountDetail> details = customerRepository.fetchDetailsByCustomerId(custId);
 		return details;
 	}
-	
+
 	public List<AccountDetail> getDetailsForAdmin() {
-		
+
 		List<AccountDetail> details = customerRepository.fetchDetailsforAdmin();
 		return details;
 	}
-	
+
 	public long validateOtp(String otp) {
 		try{
-			 long accNo = customerRepository.fetchAccNoByOtp(otp);
-			 return accNo;
+			long accNo = customerRepository.fetchAccNoByOtp(otp);
+			return accNo;
 		}
 		catch(ServiceException e){
 			throw new ServiceException("Invalid Otp");
 		}
-		
+
 	}
-	
+
 	public String impsTransaction(Transactions transaction) throws MessagingException {
-		
+
 		String email = "";
-		
+
 		Calendar cal =  Calendar.getInstance();
 		try {
 			AccountDetail acc1 = genericRepository.find(AccountDetail.class, transaction.getFromAccount());
@@ -132,7 +145,7 @@ public class CustomerService {
 					}
 					else {
 						//otpService.sendOtp(email);
-						
+
 						if(transaction.getAmount()<10000.00) {
 							acc1.setBankBalance(acc1.getBankBalance()-transaction.getAmount()-2.50);
 						}
@@ -380,7 +393,7 @@ public class CustomerService {
 			List<Long> accNumbers = customerRepository.fetchAccountNumberByCustomerId(custId);
 			List<Transaction> list = new ArrayList<Transaction>();
 			for(Long acc:accNumbers) {
-			list.addAll(customerRepository.fetchTransactionAdmin(acc,acc));
+				list.addAll(customerRepository.fetchTransactionAdmin(acc,acc));
 			}
 			return list;
 		}
@@ -388,9 +401,9 @@ public class CustomerService {
 			throw new ServiceException("No rows !!");
 		}
 	}
-	
-	
-	
+
+
+
 	//admin part below
 	public List<Transaction> transactionViewByAdmin(Long fromAccount,Long toAccount) {
 		try {
@@ -466,15 +479,15 @@ public class CustomerService {
 		if(customerRepository.isReferenceIdPresent(accReg.getReferenceNo())){
 			String subject = "Registration Confirmation";
 			String text = "Hi " + accReg.getFirstName() + accReg.getLastName()
-						+ " Here are your login credentials\n" 
-						+ "Customer Id: " + updateAccount.getCustomerId()
-						+ "\nAccount Number: " + account.getAccountNumber()
-						+ "\nLogin Password: " + account.getLoginPassword()
-						+ "\nTransaction Password: " + account.getTransactionPassword()
-						+ "\nThank you!";
+			+ " Here are your login credentials\n" 
+			+ "Customer Id: " + updateAccount.getCustomerId()
+			+ "\nAccount Number: " + account.getAccountNumber()
+			+ "\nLogin Password: " + account.getLoginPassword()
+			+ "\nTransaction Password: " + account.getTransactionPassword()
+			+ "\nThank you!";
 
 			emailService.sendEmail(accReg.getEmailId(),text,subject);
-		return updateAccount.getCustomerId();
+			return updateAccount.getCustomerId();
 		}
 
 		else {
@@ -546,25 +559,10 @@ public class CustomerService {
 		return accDetail;
 	}
 
-	public void addBeneficiary(Long userAcc, Long beneAcc, String beneName, String nickName) {
-
-		//		Payee newPayee = new Payee();
-		//		PayeeCompound compKey = new PayeeCompound();
-		//		newPayee.setBeneficiaryName(beneficiaryName);
-		//		newPayee.setNickName(nickName);
-		//		newPayee.setCompoundKey(beneficiaryAccount);
-		//		compKey.setBeneficiaryAccount(beneficiaryAccount);
-		//		newPayee.setCompoundKey(compKey);
-
-		customerRepository.savePayee(userAcc, beneAcc, beneName, nickName);
-		//Payee 
-		//return newPayee.getCompoundKey().getBeneficiaryAccount().getAccountNumber();
-	}
-
 	public List<Long> getAccounts(long custId){
 		return customerRepository.fetchAccounts(custId);
 	}
-	
+
 	public List<Transaction> fetchTransactionsByDate(Long customerId,String from,String to){
 		List<Long> acc = customerRepository.getAccountNumber(customerId);
 		List<Transaction> transactions =new ArrayList<Transaction>();
@@ -573,7 +571,7 @@ public class CustomerService {
 		}
 		return transactions;
 	}
-	
+
 	public List<Transaction> fetchTransactionsByMonth(Long customerId,YearMonth from,YearMonth to){
 		List<Long> acc = customerRepository.getAccountNumber(customerId);
 		List<Transaction> transactions =new ArrayList<Transaction>();
@@ -589,7 +587,13 @@ public class CustomerService {
 			transactions.addAll(customerRepository.getAllTransactions(a));
 		}
 		//List<Transaction> transactions =customerRepository.getAllTransactions(accNumber);
-		
+
 		return transactions;
+	}
+
+	public void addBeneficiary(Long userAcc, Long beneAcc, String beneName, String nickName) {
+
+
+		customerRepository.savePayee(userAcc, beneAcc, beneName, nickName);
 	}
 }

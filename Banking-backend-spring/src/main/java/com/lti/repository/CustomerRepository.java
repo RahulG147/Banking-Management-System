@@ -32,7 +32,7 @@ public class CustomerRepository  extends GenericRepository{
 	}
 	//admin part...later on change to AdminRepository	
 	public List<Transaction> fetchTransactionAdmin(Long fromAccount,Long toAccount) {
-			List<Transaction> resultList = (List<Transaction>)
+		List<Transaction> resultList = (List<Transaction>)
 				entityManager
 				.createQuery("select t from Transaction t where t.fromAccount.accountNumber = :from or t.toAccount.accountNumber = :to")
 				.setParameter("from", fromAccount)
@@ -100,7 +100,7 @@ public class CustomerRepository  extends GenericRepository{
 				.getSingleResult() == 1 ? true : false;
 
 	}
-	
+
 	public long fetchAccNoByOtp(String otp) {
 		return (Long)
 				entityManager
@@ -126,22 +126,22 @@ public class CustomerRepository  extends GenericRepository{
 				.getResultList();
 		return resultList;
 	}
-	
+
 	public List<AccountDetail> fetchDetailsByCustomerId(long custId) {
 		List<AccountDetail> detail = (List<AccountDetail>)
 				entityManager
 				.createQuery("SELECT a.accountNumber,a.accountType,a.bankBalance FROM AccountDetail a  WHERE a.account.customerId = :cust ")
 				.setParameter("cust",custId)
 				.getResultList();
-				return detail;
+		return detail;
 	}
-	
+
 	public List<AccountDetail> fetchDetailsforAdmin() {
 		List<AccountDetail> detail = (List<AccountDetail>)
 				entityManager
 				.createQuery("SELECT a.accountNumber,a.accountType,a.bankBalance FROM AccountDetail a ")
 				.getResultList();
-				return detail;
+		return detail;
 	}
 	public List<Long> getAccountNumber(Long customerId){
 		List<Long> accNumbers = (List<Long>)
@@ -151,7 +151,7 @@ public class CustomerRepository  extends GenericRepository{
 				.getResultList();
 		return accNumbers;
 	}
-	
+
 	//Check Query ...including date is missing 
 	public List<Transaction> allTransactionsByDate(Long fromAccount,String from,String to) {
 		/*System.out.println(from);
@@ -159,7 +159,7 @@ public class CustomerRepository  extends GenericRepository{
             try {
 				LocalDate fDate = formatter.parse(from);
 				Date tDate = formatter.parse(to);
-			*/
+		 */
 		List<Transaction> transaction = (List<Transaction>)
 				entityManager
 				.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber,t.transactionDate,t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where t.transactionDate between to_timestamp( '2001/05/31 00:00:00'  , 'YYYY/MM/DD HH24:MI:SS') and to_timestamp( :to , 'YYYY/MM/DD HH:MI:SS') and t.fromAccount.accountNumber = :fromAccount  ")
@@ -178,8 +178,8 @@ public class CustomerRepository  extends GenericRepository{
 	}
 	//.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber, to_date(to_char(TRANSACTION_DATE,'yyyy/mm/dd')),t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where to_date(to_char(TRANSACTION_DATE,'yyyy/mm/dd')) between TO_DATE(  :from,'yyyy/mm/dd') and  TO_DATE( :to,'yyyy/mm/dd') and t.fromAccount.accountNumber = :fromAccount  ")
 	//.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber,t.transactionDate,t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where  t.transactionDate >= to_timestamp( :from, 'yyyy/mm/dd hh24:mi:ss') and t.transactionDate <= to_timestamp( :to, 'yyyy/mm/dd hh24:mi:ss') and t.fromAccount.accountNumber = :fromAccount  ")
-	
-	
+
+
 	public List<Transaction> allTransactionByMonth(Long fromAccount,YearMonth from,YearMonth to){
 		List<Transaction> transaction = (List<Transaction>)
 				entityManager
@@ -200,8 +200,8 @@ public class CustomerRepository  extends GenericRepository{
 				.getResultList();
 		return transaction;
 	}
-	
-	
+
+
 	public List<Long> fetchAccountNumberByCustomerId(Long custId){
 		List<Long> accNumber = (List<Long>)
 				entityManager
@@ -210,14 +210,14 @@ public class CustomerRepository  extends GenericRepository{
 				.getResultList();
 		return accNumber;
 	}
-	
 
 
-	
+
+
 	public Account findCustomerByCustomerId(long customerId){
 		return entityManager.find(Account.class, customerId);
 	}
-	
+
 	public void savePayee(Long userAcc, Long beneAcc, String beneName, String nickName) {
 		entityManager.createNativeQuery("insert into tbl_payee (BENEFICIARY_NAME,NICK_NAME,USER_ACCOUNT_NO, BENEFICIARY_ACCOUNT_NO) values (?,?,?,?)")
 		.setParameter(1, beneName)
@@ -225,8 +225,5 @@ public class CustomerRepository  extends GenericRepository{
 		.setParameter(3, userAcc)
 		.setParameter(4, beneAcc)
 		.executeUpdate();
-		
 	}
-	
-
 }

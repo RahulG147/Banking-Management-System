@@ -54,15 +54,15 @@ public class CustomerController {
 
 	@Autowired
 	private CustomerRepository custRepo;
-	
+
 	@Autowired
 	private CustomerService customerService;
-	
+
 	@PostMapping("/register")
 	public RegisterStatus register(@RequestBody Registration customer) {
-	
+
 		try {
-			
+
 			long id = customerService.register(customer);
 			RegisterStatus status = new RegisterStatus();
 			status.setStatus(true);
@@ -77,7 +77,7 @@ public class CustomerController {
 			return status;
 		}
 	}
-	
+
 	@PostMapping("/userlogin")
 	public LoginStatus login(@RequestBody Login login) {
 		try {
@@ -91,8 +91,8 @@ public class CustomerController {
 			loginStatus.setName(registration.getFirstName());
 			loginStatus.setName(registration.getMiddleName());
 			loginStatus.setName(registration.getLastName());
-			
-			
+
+
 			return loginStatus;
 		}
 		catch(ServiceException e) {
@@ -102,44 +102,28 @@ public class CustomerController {
 			return loginStatus;
 		}
 	}
-	
-	@PostMapping("/otp")
-	public OtpStatus otp(@RequestBody Otp otp){
-		try{
-			long accNo = customerService.validateOtp(otp.getOtp());
-			OtpStatus o = new OtpStatus();
-			o.setStatus(true);
-			o.setMessage("Valid OTP!");
-			return o;
-		}
-		catch(NoResultException e){
-			OtpStatus o = new OtpStatus();
-			o.setStatus(false);
-			o.setMessage("Invalid OTP!");
-			return o;
-		}
-	}
-	
-	@GetMapping("/sendOtp")
-	public String otp(@RequestParam("customerId") int id) throws MessagingException{
-		OtpService o = new OtpService();
-		Account acc = custRepo.findCustomerByCustomerId(id);
-		System.out.println("--------------------------------------");
-		System.out.println(acc.getRegistration().getEmailId());
-		return o.sendOtp(acc.getRegistration().getEmailId());
-	}
 
 	
+
+	@GetMapping("/sendOtp")
+	public String otp(@RequestParam("customerId") int id) throws MessagingException{
+		Account acc = custRepo.findCustomerByCustomerId(id);
+		String email = acc.getRegistration().getEmailId();
+		System.out.println(email);
+		return customerService.sendOtp(email);
+	}
+
+
 	@PostMapping("/impstransaction")
 	public TransactionStatus imps(@RequestBody Transactions transaction) throws MessagingException {
 		try {
 			String referenceId = customerService.impsTransaction(transaction);
-			
+
 			TransactionStatus transactionStatus = new TransactionStatus();
 			transactionStatus.setStatus(true);
 			transactionStatus.setRefernceNo(referenceId);
 			transactionStatus.setMessage("Amount has been debited from your account and will be credited to the receipent's account");
-			
+
 			return transactionStatus;
 		}
 		catch (ServiceException e) {
@@ -149,17 +133,17 @@ public class CustomerController {
 			return transactionStatus;
 		}
 	}
-	
+
 	@PostMapping("/nefttransaction")
 	public TransactionStatus neft(@RequestBody Transactions transaction) {
 		try {
 			String referenceId = customerService.neftTransaction(transaction);
-			
+
 			TransactionStatus transactionStatus = new TransactionStatus();
 			transactionStatus.setStatus(true);
 			transactionStatus.setRefernceNo(referenceId);
 			transactionStatus.setMessage("Amount has been debited from your account and will be credited to the receipent's account");
-			
+
 			return transactionStatus;
 		}
 		catch (ServiceException e) {
@@ -169,17 +153,17 @@ public class CustomerController {
 			return transactionStatus;
 		}
 	}
-	
+
 	@PostMapping("/rtgstransaction")
 	public TransactionStatus rtgs(@RequestBody Transactions transaction) {
 		try {
 			String referenceId = customerService.rtgsTransaction(transaction);
-			
+
 			TransactionStatus transactionStatus = new TransactionStatus();
 			transactionStatus.setStatus(true);
 			transactionStatus.setRefernceNo(referenceId);
 			transactionStatus.setMessage("Amount has been debited from your account and will be credited to the receipent's account");
-			
+
 			return transactionStatus;
 		}
 		catch (ServiceException e) {
@@ -189,7 +173,7 @@ public class CustomerController {
 			return transactionStatus;
 		}
 	}
-	
+
 	//below codes are for admin part...change to Admin Controller later on
 	@GetMapping("/accountview")
 	public List<AccountDetail> basicDetails(@RequestParam ("customerId") Long custId) {
@@ -206,11 +190,11 @@ public class CustomerController {
 			status.setStatus(false);
 			status.setMessage(e.getMessage());		
 			return detail;
-			
-			
+
+
 		}
 	}
-	
+
 	@GetMapping("/adminaccountview")
 	public List<AccountDetail> basicDetails() {
 		try {
@@ -226,393 +210,392 @@ public class CustomerController {
 			status.setStatus(false);
 			status.setMessage(e.getMessage());		
 			return detail;
-			
-			
+
+
 		}
 	}
 	@GetMapping("/TransactionViewAdmin")
 	public List<AdminTransactionView> transaction(@RequestParam("accNumber") Long acc) {
-			try {
-				List<Transaction> list =  customerService.transactionViewByAdmin(acc,acc);
-				List<AdminTransactionView> viewList = new ArrayList<AdminTransactionView>();
-			
-				for(Transaction t :list) {
-					System.out.println(t.getTransactionId()+" ,"+t.getFromAccount().getAccountNumber()+" -> "+t.getToAccount().getAccountNumber()+" , "+t.getAmount());
-					AdminTransactionView view1 = new  AdminTransactionView();
-					view1.setStatus(true);
-					view1.setMessage("Retrieved Transactions!");
-					view1.setTransactionId(t.getTransactionId());
-					view1.setFromAccount(t.getFromAccount().getAccountNumber());
-					view1.setToAccount(t.getToAccount().getAccountNumber());
-					view1.setAmount(t.getAmount());
-					view1.setMode(t.getModeOfTransaction().name());
-					view1.setRemark(t.getRemarks());
-					view1.setTransactionDate(t.getTransactionDate().toLocalDate());
-					viewList.add(view1);
-				}
-				
-				return viewList;
+		try {
+			List<Transaction> list =  customerService.transactionViewByAdmin(acc,acc);
+			List<AdminTransactionView> viewList = new ArrayList<AdminTransactionView>();
+
+			for(Transaction t :list) {
+				System.out.println(t.getTransactionId()+" ,"+t.getFromAccount().getAccountNumber()+" -> "+t.getToAccount().getAccountNumber()+" , "+t.getAmount());
+				AdminTransactionView view1 = new  AdminTransactionView();
+				view1.setStatus(true);
+				view1.setMessage("Retrieved Transactions!");
+				view1.setTransactionId(t.getTransactionId());
+				view1.setFromAccount(t.getFromAccount().getAccountNumber());
+				view1.setToAccount(t.getToAccount().getAccountNumber());
+				view1.setAmount(t.getAmount());
+				view1.setMode(t.getModeOfTransaction().name());
+				view1.setRemark(t.getRemarks());
+				view1.setTransactionDate(t.getTransactionDate().toLocalDate());
+				viewList.add(view1);
 			}
-			catch(ServiceException e) {
-				AdminTransactionView view = new  AdminTransactionView();
-				List<AdminTransactionView> viewList = new ArrayList<AdminTransactionView>();
-				view.setStatus(false);
-				view.setMessage(e.getMessage());		
-				return viewList;
-				
-				
-			}
+
+			return viewList;
 		}
-		
+		catch(ServiceException e) {
+			AdminTransactionView view = new  AdminTransactionView();
+			List<AdminTransactionView> viewList = new ArrayList<AdminTransactionView>();
+			view.setStatus(false);
+			view.setMessage(e.getMessage());		
+			return viewList;
+
+
+		}
+	}
+
 	@GetMapping("/TransactionViewUser")
 	public List<AdminTransactionView> userTransaction(@RequestParam("custId") Long cust) {
-			try {
-				List<Transaction> list =  customerService.transactionViewByUser(cust);
-				List<AdminTransactionView> viewList = new ArrayList<AdminTransactionView>();
-			
-				for(Transaction t :list) {
-					System.out.println(t.getTransactionId()+" ,"+t.getFromAccount().getAccountNumber()+" -> "+t.getToAccount().getAccountNumber()+" , "+t.getAmount());
-					AdminTransactionView view1 = new  AdminTransactionView();
-					view1.setStatus(true);
-					view1.setMessage("Retrieved Transactions!");
-					view1.setTransactionId(t.getTransactionId());
-					view1.setFromAccount(t.getFromAccount().getAccountNumber());
-					view1.setToAccount(t.getToAccount().getAccountNumber());
-					view1.setAmount(t.getAmount());
-					view1.setMode(t.getModeOfTransaction().name());
-					view1.setRemark(t.getRemarks());
-					view1.setTransactionDate(t.getTransactionDate().toLocalDate());
-					viewList.add(view1);
-				}
-				
-				return viewList;
+		try {
+			List<Transaction> list =  customerService.transactionViewByUser(cust);
+			List<AdminTransactionView> viewList = new ArrayList<AdminTransactionView>();
+
+			for(Transaction t :list) {
+				System.out.println(t.getTransactionId()+" ,"+t.getFromAccount().getAccountNumber()+" -> "+t.getToAccount().getAccountNumber()+" , "+t.getAmount());
+				AdminTransactionView view1 = new  AdminTransactionView();
+				view1.setStatus(true);
+				view1.setMessage("Retrieved Transactions!");
+				view1.setTransactionId(t.getTransactionId());
+				view1.setFromAccount(t.getFromAccount().getAccountNumber());
+				view1.setToAccount(t.getToAccount().getAccountNumber());
+				view1.setAmount(t.getAmount());
+				view1.setMode(t.getModeOfTransaction().name());
+				view1.setRemark(t.getRemarks());
+				view1.setTransactionDate(t.getTransactionDate().toLocalDate());
+				viewList.add(view1);
 			}
-			catch(ServiceException e) {
-				AdminTransactionView view = new  AdminTransactionView();
-				List<AdminTransactionView> viewList = new ArrayList<AdminTransactionView>();
-				view.setStatus(false);
-				view.setMessage(e.getMessage());		
-				return viewList;
-				
-				
-			}
+
+			return viewList;
 		}
-	
-		@GetMapping("/RequestViewByAdmin")
-		public List<AdminGetRegisterStatus> requestView() {
-			try {
-				List<Registration> list =  customerService.RegisterRequestAction();
-				List<AdminGetRegisterStatus> viewList = new ArrayList<AdminGetRegisterStatus>();
-			
-				for(Registration t :list) {
-					//System.out.println(t.getTransactionId()+" ,"+t.getFromAccount().getAccountNumber()+" -> "+t.getToAccount().getAccountNumber()+" , "+t.getAmount());
-					AdminGetRegisterStatus view1 = new  AdminGetRegisterStatus();
-					view1.setStatus(true);
-					view1.setMessage("Retrieved Account Request!");
-					view1.setReferenceId(t.getReferenceNo());
-					view1.setTitle(t.getTitle());
-					view1.setFirstName(t.getFirstName());
-					view1.setMiddleName(t.getMiddleName());
-					view1.setLastName(t.getLastName());
-					view1.setFatherName(t.getFatherName());
-					view1.setMobileNo(t.getMobileNo());
-					view1.setEmailId(t.getEmailId());
-					view1.setAadhaarNo(t.getAadhaarNo());
-					view1.setPanCard(t.getPanCard());
-					view1.setDateOfBirth(t.getDateOfBirth());
-					view1.setResidentialAddress(t.getResidentialAddress());
-					view1.setOccupation(t.getOccupation());
-					view1.setIncomeSource(t.getIncomeSource());
-					view1.setAnnualIncome(t.getAnnualIncome());
-					view1.setRevenueRegisterNo(t.getRevenueRegisterNo());
-					view1.setGstNumber(t.getGstNumber());
-					viewList.add(view1);
-				}
-				
-				return viewList;
-			}
-			catch(ServiceException e) {
-				AdminGetRegisterStatus status = new AdminGetRegisterStatus();
-				List<AdminGetRegisterStatus> viewList = new ArrayList<AdminGetRegisterStatus>();
-				status.setStatus(false);
-				status.setMessage(e.getMessage());	
-				viewList.add(status);
-				return viewList;
-			}
+		catch(ServiceException e) {
+			AdminTransactionView view = new  AdminTransactionView();
+			List<AdminTransactionView> viewList = new ArrayList<AdminTransactionView>();
+			view.setStatus(false);
+			view.setMessage(e.getMessage());		
+			return viewList;
+
+
 		}
-		
-		@PostMapping("/setcredential")
-		public CredentialStatus setCredential(@RequestBody AccountCredential account ) {
-			
-			try {
-				long id= customerService.updateCredential(account);
-				CredentialStatus status = new CredentialStatus();
-				status.setStatus(true);
-				status.setMessage("updation successful !");
-				status.setCustId(id);
-				return status;
-			}
-			catch(ServiceException e) {
-				CredentialStatus status = new CredentialStatus();
-				status.setStatus(false);
-				status.setMessage(e.getMessage());
-				return status;
-			}
-			
-		}
-		
-		@GetMapping("/FileViewByAdmin")
-		public List<AdminGetRegisterStatus> requestFileView(@RequestParam Long ref) {
-			try {
-				List<AdminGetRegisterStatus> viewList = new ArrayList<AdminGetRegisterStatus>();
-				Registration reg = (Registration) customerService.registerFileView(ref);
+	}
+
+	@GetMapping("/RequestViewByAdmin")
+	public List<AdminGetRegisterStatus> requestView() {
+		try {
+			List<Registration> list =  customerService.RegisterRequestAction();
+			List<AdminGetRegisterStatus> viewList = new ArrayList<AdminGetRegisterStatus>();
+
+			for(Registration t :list) {
+				//System.out.println(t.getTransactionId()+" ,"+t.getFromAccount().getAccountNumber()+" -> "+t.getToAccount().getAccountNumber()+" , "+t.getAmount());
 				AdminGetRegisterStatus view1 = new  AdminGetRegisterStatus();
 				view1.setStatus(true);
 				view1.setMessage("Retrieved Account Request!");
-				view1.setAadhaarNo(reg.getAadhaarNo());
-				view1.setRevenueRegisterNo(reg.getRevenueRegisterNo());
-				view1.setGstNumber(reg.getGstNumber());
-				view1.setPanCard(reg.getPanCard());
-				view1.setAadharPic(reg.getAadharPic());
-				view1.setPanPic(reg.getPanPic());
-				view1.setGstProof(reg.getGstNumber());
-				view1.setLightBill(reg.getLightBill());
+				view1.setReferenceId(t.getReferenceNo());
+				view1.setTitle(t.getTitle());
+				view1.setFirstName(t.getFirstName());
+				view1.setMiddleName(t.getMiddleName());
+				view1.setLastName(t.getLastName());
+				view1.setFatherName(t.getFatherName());
+				view1.setMobileNo(t.getMobileNo());
+				view1.setEmailId(t.getEmailId());
+				view1.setAadhaarNo(t.getAadhaarNo());
+				view1.setPanCard(t.getPanCard());
+				view1.setDateOfBirth(t.getDateOfBirth());
+				view1.setResidentialAddress(t.getResidentialAddress());
+				view1.setOccupation(t.getOccupation());
+				view1.setIncomeSource(t.getIncomeSource());
+				view1.setAnnualIncome(t.getAnnualIncome());
+				view1.setRevenueRegisterNo(t.getRevenueRegisterNo());
+				view1.setGstNumber(t.getGstNumber());
 				viewList.add(view1);
-				
-				return viewList;
 			}
-			catch(ServiceException e) {
-				AdminGetRegisterStatus status = new AdminGetRegisterStatus();
-				List<AdminGetRegisterStatus> viewList = new ArrayList<AdminGetRegisterStatus>();
-				status.setStatus(false);
-				status.setMessage(e.getMessage());	
-				viewList.add(status);
-				return viewList;
-			}
+
+			return viewList;
 		}
-		
-		
-		@DeleteMapping("/remove")
-		public Status rejectRequest(@RequestParam ("referenceId") Long ref) {
-			//int res =  customerService.remove(ref);
-			
-			customerService.deleteRow(ref);
-			Status status = new  Status();
+		catch(ServiceException e) {
+			AdminGetRegisterStatus status = new AdminGetRegisterStatus();
+			List<AdminGetRegisterStatus> viewList = new ArrayList<AdminGetRegisterStatus>();
+			status.setStatus(false);
+			status.setMessage(e.getMessage());	
+			viewList.add(status);
+			return viewList;
+		}
+	}
+
+	@PostMapping("/setcredential")
+	public CredentialStatus setCredential(@RequestBody AccountCredential account ) {
+
+		try {
+			long id= customerService.updateCredential(account);
+			CredentialStatus status = new CredentialStatus();
 			status.setStatus(true);
-			status.setMessage("Request rejected successfully");
-			
+			status.setMessage("updation successful !");
+			status.setCustId(id);
+			return status;
+		}
+		catch(ServiceException e) {
+			CredentialStatus status = new CredentialStatus();
+			status.setStatus(false);
+			status.setMessage(e.getMessage());
 			return status;
 		}
 
-		@PostMapping("/pic-upload")
-		public Status upload(Picture picDetails) {
-			
-			long referenceId = picDetails.getReferenceId();
-			//long referenceId = (long)62;
-			
-			String imgUploadLocation = "c:/uploads/";
-			
-			String uploadedFileName1 = picDetails.getAadharPic().getOriginalFilename();
-			String newFileName1 = referenceId + "-" + uploadedFileName1;
-			String targetFileName1 = imgUploadLocation + newFileName1;
-			
-			String uploadedFileName2 = picDetails.getPanPic().getOriginalFilename();
-			String newFileName2 = referenceId + "-" + uploadedFileName2;
-			String targetFileName2 = imgUploadLocation + newFileName2;
-			
-			String uploadedFileName3 = picDetails.getLightBill().getOriginalFilename();
-			String newFileName3 = referenceId + "-" + uploadedFileName3;
-			String targetFileName3 = imgUploadLocation + newFileName3;
-			
-			String uploadedFileName4 = picDetails.getGstProof().getOriginalFilename();
-			String newFileName4 = referenceId + "-" + uploadedFileName4;
-			String targetFileName4 = imgUploadLocation + newFileName4;
-			
-			try {
-				FileCopyUtils.copy(picDetails.getAadharPic().getInputStream(), new FileOutputStream(targetFileName1));
-				FileCopyUtils.copy(picDetails.getPanPic().getInputStream(), new FileOutputStream(targetFileName2));
-				FileCopyUtils.copy(picDetails.getLightBill().getInputStream(), new FileOutputStream(targetFileName3));
-				FileCopyUtils.copy(picDetails.getGstProof().getInputStream(), new FileOutputStream(targetFileName4));
-			}
-			catch(IOException e) {
-				e.printStackTrace(); //hope no error would occur
-				Status status = new Status();
-				status.setStatus(false);
-				status.setMessage("Picture upload failed!");
-			}
-			//System.out.println(newFileName1+newFileName2+newFileName3+newFileName4);
-			customerService.updatePicture(referenceId, newFileName1, newFileName2, newFileName3, newFileName4);
-			
+	}
+
+	@GetMapping("/FileViewByAdmin")
+	public List<AdminGetRegisterStatus> requestFileView(@RequestParam Long ref) {
+		try {
+			List<AdminGetRegisterStatus> viewList = new ArrayList<AdminGetRegisterStatus>();
+			Registration reg = (Registration) customerService.registerFileView(ref);
+			AdminGetRegisterStatus view1 = new  AdminGetRegisterStatus();
+			view1.setStatus(true);
+			view1.setMessage("Retrieved Account Request!");
+			view1.setAadhaarNo(reg.getAadhaarNo());
+			view1.setRevenueRegisterNo(reg.getRevenueRegisterNo());
+			view1.setGstNumber(reg.getGstNumber());
+			view1.setPanCard(reg.getPanCard());
+			view1.setAadharPic(reg.getAadharPic());
+			view1.setPanPic(reg.getPanPic());
+			view1.setGstProof(reg.getGstNumber());
+			view1.setLightBill(reg.getLightBill());
+			viewList.add(view1);
+
+			return viewList;
+		}
+		catch(ServiceException e) {
+			AdminGetRegisterStatus status = new AdminGetRegisterStatus();
+			List<AdminGetRegisterStatus> viewList = new ArrayList<AdminGetRegisterStatus>();
+			status.setStatus(false);
+			status.setMessage(e.getMessage());	
+			viewList.add(status);
+			return viewList;
+		}
+	}
+
+
+	@DeleteMapping("/remove")
+	public Status rejectRequest(@RequestParam ("referenceId") Long ref) {
+		//int res =  customerService.remove(ref);
+
+		customerService.deleteRow(ref);
+		Status status = new  Status();
+		status.setStatus(true);
+		status.setMessage("Request rejected successfully");
+
+		return status;
+	}
+
+	@PostMapping("/pic-upload")
+	public Status upload(Picture picDetails) {
+
+		long referenceId = picDetails.getReferenceId();
+		//long referenceId = (long)62;
+
+		String imgUploadLocation = "c:/uploads/";
+
+		String uploadedFileName1 = picDetails.getAadharPic().getOriginalFilename();
+		String newFileName1 = referenceId + "-" + uploadedFileName1;
+		String targetFileName1 = imgUploadLocation + newFileName1;
+
+		String uploadedFileName2 = picDetails.getPanPic().getOriginalFilename();
+		String newFileName2 = referenceId + "-" + uploadedFileName2;
+		String targetFileName2 = imgUploadLocation + newFileName2;
+
+		String uploadedFileName3 = picDetails.getLightBill().getOriginalFilename();
+		String newFileName3 = referenceId + "-" + uploadedFileName3;
+		String targetFileName3 = imgUploadLocation + newFileName3;
+
+		String uploadedFileName4 = picDetails.getGstProof().getOriginalFilename();
+		String newFileName4 = referenceId + "-" + uploadedFileName4;
+		String targetFileName4 = imgUploadLocation + newFileName4;
+
+		try {
+			FileCopyUtils.copy(picDetails.getAadharPic().getInputStream(), new FileOutputStream(targetFileName1));
+			FileCopyUtils.copy(picDetails.getPanPic().getInputStream(), new FileOutputStream(targetFileName2));
+			FileCopyUtils.copy(picDetails.getLightBill().getInputStream(), new FileOutputStream(targetFileName3));
+			FileCopyUtils.copy(picDetails.getGstProof().getInputStream(), new FileOutputStream(targetFileName4));
+		}
+		catch(IOException e) {
+			e.printStackTrace(); //hope no error would occur
 			Status status = new Status();
-			status.setStatus(true);
-			status.setMessage("Profilepic uploaded successfully!");
-			return status;
+			status.setStatus(false);
+			status.setMessage("Picture upload failed!");
 		}
-		
-		@GetMapping("/profile")
-		//public Customer profile(@RequestParam("customerId")int id) {
-		//we need to take of help of HttpServletRequest object in below code
-		public Registration profile(@RequestParam("referenceId") long id, HttpServletRequest request) {
-			
-			//HttpSession session = request.getSession();
-			//session.setAttribute("otp", 123);
-			
-			Registration registration = customerService.get(id);
-			
-			//the problem is the image is in some folder outside this project
-			//because of this, on the client we will not be able to access the same
-			//we need to write code to copy image from d:/uploads folder to a folder inside our project
-			
-			String projPath = request.getServletContext().getRealPath("/");
-			System.out.println(projPath);
-			
-			String tempDownloadPath = projPath + "/downloads/";
-			File f = new File(tempDownloadPath);
-			if(!f.exists())
-				f.mkdir();
-			
-			String targetFile1 = tempDownloadPath + registration.getAadharPic();
-			String targetFile2 = tempDownloadPath + registration.getPanPic();
-			String targetFile3 = tempDownloadPath + registration.getLightBill();
-			String targetFile4 = tempDownloadPath + registration.getGstProof();
-			
-			//reading the original location where the image is present
-			String uploadedImagesPath = "C:\\uploads\\";
-			String sourceFile1 = uploadedImagesPath + registration.getAadharPic();
-			String sourceFile2 = uploadedImagesPath + registration.getPanPic();
-			String sourceFile3 = uploadedImagesPath + registration.getLightBill();
-			String sourceFile4 = uploadedImagesPath + registration.getGstProof();
-			
-			try {
-				FileCopyUtils.copy(new File(sourceFile1), new File(targetFile1));
-				FileCopyUtils.copy(new File(sourceFile2), new File(targetFile2));
-				FileCopyUtils.copy(new File(sourceFile3), new File(targetFile3));
-				FileCopyUtils.copy(new File(sourceFile4), new File(targetFile4));
-			}
-			catch (IOException e) {
-				e.printStackTrace(); //hoping for no error will occur
-			}
-			
-			return registration;
+		//System.out.println(newFileName1+newFileName2+newFileName3+newFileName4);
+		customerService.updatePicture(referenceId, newFileName1, newFileName2, newFileName3, newFileName4);
+
+		Status status = new Status();
+		status.setStatus(true);
+		status.setMessage("Profilepic uploaded successfully!");
+		return status;
+	}
+
+	@GetMapping("/profile")
+	//public Customer profile(@RequestParam("customerId")int id) {
+	//we need to take of help of HttpServletRequest object in below code
+	public Registration profile(@RequestParam("referenceId") long id, HttpServletRequest request) {
+
+		//HttpSession session = request.getSession();
+		//session.setAttribute("otp", 123);
+
+		Registration registration = customerService.get(id);
+
+		//the problem is the image is in some folder outside this project
+		//because of this, on the client we will not be able to access the same
+		//we need to write code to copy image from d:/uploads folder to a folder inside our project
+
+		String projPath = request.getServletContext().getRealPath("/");
+		System.out.println(projPath);
+
+		String tempDownloadPath = projPath + "/downloads/";
+		File f = new File(tempDownloadPath);
+		if(!f.exists())
+			f.mkdir();
+
+		String targetFile1 = tempDownloadPath + registration.getAadharPic();
+		String targetFile2 = tempDownloadPath + registration.getPanPic();
+		String targetFile3 = tempDownloadPath + registration.getLightBill();
+		String targetFile4 = tempDownloadPath + registration.getGstProof();
+
+		//reading the original location where the image is present
+		String uploadedImagesPath = "C:\\uploads\\";
+		String sourceFile1 = uploadedImagesPath + registration.getAadharPic();
+		String sourceFile2 = uploadedImagesPath + registration.getPanPic();
+		String sourceFile3 = uploadedImagesPath + registration.getLightBill();
+		String sourceFile4 = uploadedImagesPath + registration.getGstProof();
+
+		try {
+			FileCopyUtils.copy(new File(sourceFile1), new File(targetFile1));
+			FileCopyUtils.copy(new File(sourceFile2), new File(targetFile2));
+			FileCopyUtils.copy(new File(sourceFile3), new File(targetFile3));
+			FileCopyUtils.copy(new File(sourceFile4), new File(targetFile4));
+		}
+		catch (IOException e) {
+			e.printStackTrace(); //hoping for no error will occur
 		}
 
-		@PostMapping("/SetPassword")
-		public NewPasswordStatus setPassword(@RequestBody Account acc) {
-			
-			try {
-				long id = customerService.addPassword(acc.getCustomerId(), acc.getLoginPassword(), acc.getTransactionPassword());
-				NewPasswordStatus status = new NewPasswordStatus();
-				status.setStatus(true);
-				status.setMessage("Password changes successful");
-				status.setCustomerId(id);
-				return status;
-			}
-			catch(ServiceException e) {
-				NewPasswordStatus status = new NewPasswordStatus();
-				status.setStatus(false);
-				status.setMessage(e.getMessage());
-				return status;
-			}
+		return registration;
+	}
+
+	@PostMapping("/SetPassword")
+	public NewPasswordStatus setPassword(@RequestBody Account acc) {
+
+		try {
+			long id = customerService.addPassword(acc.getCustomerId(), acc.getLoginPassword(), acc.getTransactionPassword());
+			NewPasswordStatus status = new NewPasswordStatus();
+			status.setStatus(true);
+			status.setMessage("Password changes successful");
+			status.setCustomerId(id);
+			return status;
 		}
-		
-		@GetMapping("/accountSummary")
-		public AccountSummary accountSummary(@RequestParam("accountNumber") long accountNumber) {
-			
-			try {
-				AccountDetail detail = (AccountDetail) customerService.viewAccountDetails(accountNumber);
-				
-				AccountSummary acc = new AccountSummary();
-				acc.setAccountNumber(detail.getAccountNumber());
-				acc.setAccountType(detail.getAccountType());
-				acc.setBankBalance(detail.getBankBalance());
-				acc.setStatus(true);
-				acc.setMessage("Customer is present");
-				
-				return acc;
-			}
-			catch(ServiceException e) {
-				AccountSummary status = new AccountSummary();
-				status.setStatus(false);
-				status.setMessage(e.getMessage());	
-				return status;
+		catch(ServiceException e) {
+			NewPasswordStatus status = new NewPasswordStatus();
+			status.setStatus(false);
+			status.setMessage(e.getMessage());
+			return status;
 		}
-}
-		@GetMapping("/getTransactionsByDate")
-		public List<Transaction> getTransactionsOfCustomerByDate(@RequestParam("customerId") Long customerId,@RequestParam(value="fromDate")  String from, @RequestParam(value="toDate") String to ){
-			try {
-				CustomerRepository cust = new CustomerRepository(); 
-				List<Transaction> list = customerService.fetchTransactionsByDate(customerId,from,to);
-				Status status = new Status();
-				status.setMessage("transactions fetched successfully !!");
-				status.setStatus(true);
-				return list;
-			}
-			catch(ServiceException e) {
-				List<Transaction> list = new ArrayList<Transaction>();
-				Status status = new Status();
-				status.setMessage(e.getMessage());
-				status.setStatus(true);
-				return list;
-			}
+	}
+
+	@GetMapping("/accountSummary")
+	public AccountSummary accountSummary(@RequestParam("accountNumber") long accountNumber) {
+
+		try {
+			AccountDetail detail = (AccountDetail) customerService.viewAccountDetails(accountNumber);
+
+			AccountSummary acc = new AccountSummary();
+			acc.setAccountNumber(detail.getAccountNumber());
+			acc.setAccountType(detail.getAccountType());
+			acc.setBankBalance(detail.getBankBalance());
+			acc.setStatus(true);
+			acc.setMessage("Customer is present");
+
+			return acc;
 		}
-		
-		@GetMapping("/getTransactionsByMonth")
-		public List<Transaction> getTransactionsBasedOnMonth(@RequestParam("customerId") Long customerId,YearMonth from , YearMonth to ){
-			try {
-				CustomerRepository cust = new CustomerRepository(); 
-				List<Transaction> list = customerService.fetchTransactionsByMonth(customerId,from,to);
-				Status status = new Status();
-				status.setMessage("transactions fetched successfully !!");
-				status.setStatus(true);
-				return list;
-			}
-			catch(ServiceException e) {
-				List<Transaction> list = new ArrayList<Transaction>();
-				Status status = new Status();
-				status.setMessage(e.getMessage());
-				status.setStatus(true);
-				return list;
-			}
+		catch(ServiceException e) {
+			AccountSummary status = new AccountSummary();
+			status.setStatus(false);
+			status.setMessage(e.getMessage());	
+			return status;
 		}
-			
-			@GetMapping("/getAllTransactions")
-			public List<Transaction> getAllTransactions(@RequestParam("custId") Long custId){
-				try {
-					CustomerRepository cust = new CustomerRepository(); 
-					List<Transaction> list = customerService.fetchAllTransactions(custId);
-					Status status = new Status();
-					status.setMessage("transactions fetched successfully !!");
-					status.setStatus(true);
-					return list;
-				}
-				catch(ServiceException e) {
-					List<Transaction> list = new ArrayList<Transaction>();
-					Status status = new Status();
-					status.setMessage(e.getMessage());
-					status.setStatus(true);
-					return list;
-				}
-			
-			
+	}
+	@GetMapping("/getTransactionsByDate")
+	public List<Transaction> getTransactionsOfCustomerByDate(@RequestParam("customerId") Long customerId,@RequestParam(value="fromDate")  String from, @RequestParam(value="toDate") String to ){
+		try {
+			CustomerRepository cust = new CustomerRepository(); 
+			List<Transaction> list = customerService.fetchTransactionsByDate(customerId,from,to);
+			Status status = new Status();
+			status.setMessage("transactions fetched successfully !!");
+			status.setStatus(true);
+			return list;
 		}
-		
-			
-		@PostMapping("/addBeneficiary")
-		public NewBeneficiaryStatus addNewBeneficiary(@RequestBody Payee payee) {
-			
-			try {
-				customerService.addBeneficiary(payee);
-				NewBeneficiaryStatus status = new NewBeneficiaryStatus();
-				status.setStatus(true);
-				status.setMessage("Beneficiary added");
-				//status.setBeneficiaryAccountNumber(id);
-				return status;
-			}
-			catch(ServiceException e) {
-				NewBeneficiaryStatus status = new NewBeneficiaryStatus();
-				status.setStatus(false);
-				status.setMessage(e.getMessage());
-				return status;
-			}
+		catch(ServiceException e) {
+			List<Transaction> list = new ArrayList<Transaction>();
+			Status status = new Status();
+			status.setMessage(e.getMessage());
+			status.setStatus(true);
+			return list;
 		}
+	}
+
+	@GetMapping("/getTransactionsByMonth")
+	public List<Transaction> getTransactionsBasedOnMonth(@RequestParam("customerId") Long customerId,YearMonth from , YearMonth to ){
+		try {
+			CustomerRepository cust = new CustomerRepository(); 
+			List<Transaction> list = customerService.fetchTransactionsByMonth(customerId,from,to);
+			Status status = new Status();
+			status.setMessage("transactions fetched successfully !!");
+			status.setStatus(true);
+			return list;
+		}
+		catch(ServiceException e) {
+			List<Transaction> list = new ArrayList<Transaction>();
+			Status status = new Status();
+			status.setMessage(e.getMessage());
+			status.setStatus(true);
+			return list;
+		}
+	}
+
+	@GetMapping("/getAllTransactions")
+	public List<Transaction> getAllTransactions(@RequestParam("custId") Long custId){
+		try {
+			CustomerRepository cust = new CustomerRepository(); 
+			List<Transaction> list = customerService.fetchAllTransactions(custId);
+			Status status = new Status();
+			status.setMessage("transactions fetched successfully !!");
+			status.setStatus(true);
+			return list;
+		}
+		catch(ServiceException e) {
+			List<Transaction> list = new ArrayList<Transaction>();
+			Status status = new Status();
+			status.setMessage(e.getMessage());
+			status.setStatus(true);
+			return list;
+		}
+
+
+	}
+
+	@GetMapping("/addBeneficiary")
+	public NewBeneficiaryStatus addNewBeneficiary(@RequestParam Long userAcc, Long beneAcc, String beneName, String nickName ) {
+
+		try {
+			customerService.addBeneficiary(userAcc, beneAcc, beneName, nickName);
+			NewBeneficiaryStatus status = new NewBeneficiaryStatus();
+			status.setStatus(true);
+			status.setMessage("Beneficiary added");
+			//status.setBeneficiaryAccountNumber(id);
+			return status;
+		}
+		catch(ServiceException e) {
+			NewBeneficiaryStatus status = new NewBeneficiaryStatus();
+			status.setStatus(false);
+			status.setMessage(e.getMessage());
+			return status;
+		}
+	}
 }
