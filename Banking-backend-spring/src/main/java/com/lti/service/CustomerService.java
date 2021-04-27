@@ -540,22 +540,9 @@ public class CustomerService {
 	}
 
 	public long addPassword(long customerId, String loginPassword, String transactionPassword) {
-		//if(customerRepository.isCustomerPresent(customer.getCustomerId())) {
-		//throw new ServiceException("Error!! Try forget password");
-		//}
-		//if(customerRepository.isCustomerIdPresentInAdminTable(admin.getCustomerId())){
-		//Account acc = (Account) customerRepository.find(Account.class, customerId);
-		//String loginPassword = acc.getLoginPassword();
-		//String transactionPassword = acc.getTransactionPassword();
+
 		customerRepository.updateNewPassword(customerId, loginPassword, transactionPassword);
-		//			Account addNewEntry = (Account) customerRepository.save(customer);
-		//			AccountDetail addNewTypeEntry = new AccountDetail();
-		//			AccountCredential adminTable = new AccountCredential();
-		//			addNewTypeEntry.setAccountNumber(adminTable.getAccountNumber());
-		//			addNewTypeEntry.setAccountType(adminTable.getAccountType());;
-		//			addNewTypeEntry.setBankBalance(adminTable.getBalance());
-		//			addNewTypeEntry.setCustomerId(adminTable.getCustomerId());
-		//			customerRepository.save(addNewTypeEntry);
+
 		return customerId;
 	}
 
@@ -592,8 +579,7 @@ public class CustomerService {
 		for(Long a:acc) {
 			transactions.addAll(customerRepository.getAllTransactions(a));
 		}
-		//List<Transaction> transactions =customerRepository.getAllTransactions(accNumber);
-
+		
 		return transactions;
 	}
 

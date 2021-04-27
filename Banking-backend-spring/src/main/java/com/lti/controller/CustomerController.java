@@ -286,7 +286,6 @@ public class CustomerController {
 			List<AdminGetRegisterStatus> viewList = new ArrayList<AdminGetRegisterStatus>();
 
 			for(Registration t :list) {
-				//System.out.println(t.getTransactionId()+" ,"+t.getFromAccount().getAccountNumber()+" -> "+t.getToAccount().getAccountNumber()+" , "+t.getAmount());
 				AdminGetRegisterStatus view1 = new  AdminGetRegisterStatus();
 				view1.setStatus(true);
 				view1.setMessage("Retrieved Account Request!");
@@ -389,7 +388,6 @@ public class CustomerController {
 	public Status upload(Picture picDetails) {
 
 		long referenceId = picDetails.getReferenceId();
-		//long referenceId = (long)62;
 
 		String imgUploadLocation = "e:/uploads/";
 

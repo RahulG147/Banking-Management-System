@@ -153,7 +153,6 @@ public class CustomerRepository  extends GenericRepository{
 		return accNumbers;
 	}
 
-	//Check Query ...including date is missing 
 	public List<Transaction> allTransactionsByDate(Long fromAccount,String from,String to) {
 		LocalDate fdate = LocalDate.parse(from);
 		LocalDate tdate = LocalDate.parse(to);
@@ -169,27 +168,14 @@ public class CustomerRepository  extends GenericRepository{
 	}
 
 	public List<Transaction> allTransactionByMonth(Long fromAccount,String from,String to){
-		LocalDate fdate1 = LocalDate.parse(from);
-			LocalDate tdate1 = LocalDate.parse(to);
-//			String s1 = fdate1+"-01";
-//			String s2 = tdate1+"-31";
-//			
-//			System.out.println(s1+" "+s2);
-//			LocalDate fdate = LocalDate.parse(s1);
-//			LocalDate tdate = LocalDate.parse(s2);
-		//	System.out.println(fdate+" "+tdate);
-			List<Transaction> transaction = (List<Transaction>)
-					entityManager
-					.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber,t.transactionDate,t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where t.fromAccount.accountNumber = :fromAccount  order by t.transactionDate desc")
-			        .setParameter("fromAccount", fromAccount)
-			        .setParameter("from", fdate1)
-			        .setParameter("to", tdate1)
-			        .getResultList();
-			return transaction;
-		}
+        List<Transaction> transaction = (List<Transaction>)
+                entityManager
+                .createNativeQuery("SELECT  FROM_ACCOUNT, TO_ACCOUNT, TRANSACTION_DATE, MESSAGE, TR_AMOUNT, TR_MODE, TR_STATUS from tbl_transaction_detail where  FROM_ACCOUNT = ?  ")
+                .setParameter(1, fromAccount)
+                .getResultList();
+        return transaction;
+    }
 	
-	//and  t.transactionDate  between to_date(:from, 'yyyy/mm/dd') and to_date(:to, 'yyyy/mm/dd')
-
 	public List<Transaction> getAllTransactions(Long acc){
 		List<Transaction> transaction = (List<Transaction>)
 				entityManager
