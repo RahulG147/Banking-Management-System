@@ -180,10 +180,10 @@ public class CustomerRepository  extends GenericRepository{
 		//	System.out.println(fdate+" "+tdate);
 			List<Transaction> transaction = (List<Transaction>)
 					entityManager
-					.createNativeQuery("SELECT  FROM_ACCOUNT, TO_ACCOUNT, TRANSACTION_DATE, MESSAGE, TR_AMOUNT, TR_MODE, TR_STATUS from tbl_transaction_detail where TO_DATE(TO_CHAR(TRANSACTION_DATE, 'YYYY-MM'),'YYYY-MM') BETWEEN   ?  and ?  and FROM_ACCOUNT = ?  ")
-			        .setParameter(3, fromAccount)
-			        .setParameter(1, fdate1)
-			        .setParameter(2, tdate1)
+					.createQuery("SELECT t.fromAccount.accountNumber,t.toAccount.accountNumber,t.transactionDate,t.message,t.amount,t.modeOfTransaction,t.status from Transaction t where t.fromAccount.accountNumber = :fromAccount  order by t.transactionDate desc")
+			        .setParameter("fromAccount", fromAccount)
+			        .setParameter("from", fdate1)
+			        .setParameter("to", tdate1)
 			        .getResultList();
 			return transaction;
 		}
