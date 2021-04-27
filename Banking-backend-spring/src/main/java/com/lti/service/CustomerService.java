@@ -64,7 +64,8 @@ public class CustomerService {
 		String otp = otpService.generateOtp();
 
 		String subject = "Request for OTP for transaction";
-		String text = "The OTP for your transaction is "+otp;
+		String text = "The OTP for your transaction is "+otp
+					+ "\nPlease do not share your OTP with anyone";
 
 		emailService.sendEmail(email,text,subject);
 		return otp;

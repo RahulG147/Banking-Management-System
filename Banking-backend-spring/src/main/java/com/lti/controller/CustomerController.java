@@ -29,7 +29,6 @@ import com.lti.model.Login;
 import com.lti.model.LoginStatus;
 import com.lti.model.NewBeneficiaryStatus;
 import com.lti.model.NewPasswordStatus;
-import com.lti.model.OtpStatus;
 import com.lti.model.Picture;
 import com.lti.model.RegisterStatus;
 import com.lti.model.Status;
@@ -39,7 +38,6 @@ import com.lti.repository.CustomerRepository;
 import com.lti.entity.Account;
 import com.lti.entity.AccountCredential;
 import com.lti.entity.AccountDetail;
-import com.lti.entity.Otp;
 import com.lti.entity.Payee;
 import com.lti.entity.Registration;
 import com.lti.entity.Transaction;
@@ -109,7 +107,6 @@ public class CustomerController {
 	public String otp(@RequestParam("customerId") int id) throws MessagingException{
 		Account acc = custRepo.findCustomerByCustomerId(id);
 		String email = acc.getRegistration().getEmailId();
-		System.out.println(email);
 		return customerService.sendOtp(email);
 	}
 
@@ -174,7 +171,7 @@ public class CustomerController {
 		}
 	}
 
-	//below codes are for admin part...change to Admin Controller later on
+	//below codes are for admin part...
 	@GetMapping("/accountview")
 	public List<AccountDetail> basicDetails(@RequestParam ("customerId") Long custId) {
 		try {

@@ -31,7 +31,7 @@ public class CustomerRepository  extends GenericRepository{
 				.setParameter("pw", loginPassword)
 				.getSingleResult();
 	}
-	//admin part...later on change to AdminRepository	
+	//admin part...
 	public List<Transaction> fetchTransactionAdmin(Long fromAccount,Long toAccount) {
 		List<Transaction> resultList = (List<Transaction>)
 				entityManager
@@ -208,9 +208,6 @@ public class CustomerRepository  extends GenericRepository{
 				.getResultList();
 		return accNumber;
 	}
-
-
-
 
 	public Account findCustomerByCustomerId(long customerId){
 		return entityManager.find(Account.class, customerId);
