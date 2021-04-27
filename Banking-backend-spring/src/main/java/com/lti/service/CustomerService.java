@@ -88,6 +88,13 @@ public class CustomerService {
 		try {
 			Registration reg = (Registration) customerRepository.find(Registration.class, ref);
 			customerRepository.deleteById(reg);
+			String subject = "Registration Rejected";
+			String text = "Hi " + reg.getFirstName()+" " + reg.getLastName()
+			+ " We are sorry to inform you that your request for opening the Savings account is rejected." 
+			+ "\nCheck the uploaded documents and register with valid documents again."
+			+ "\nThank you!";
+
+			emailService.sendEmail(reg.getEmailId(),text,subject);
 
 		}
 		catch(EmptyResultDataAccessException e) {
@@ -492,12 +499,11 @@ public class CustomerService {
 		}
 
 		else {
-
+			
 			throw new ServiceException("No such customer registered");
 
 		}
 	}
-
 
 	public long addPassword(Account customer) {
 		if(customerRepository.isCustomerPresent(customer.getCustomerId()))
